@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Excel文件分析</title>
+    <script src="https://cdn.jsdelivr.net/npm/xlsx@0.18.5/dist/xlsx.full.min.js"></script>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 20px;
+        }
+        .file-input {
+            margin: 20px 0;
+        }
+        .result {
+            margin-top: 20px;
+            padding: 10px;
+            border: 1px solid #ddd;
+            background-color: #f9f9f9;
+        }
+        table {
+            border-collapse: collapse;
+            width: 100%;
+            margin-top: 10px;
+        }
+        th, td {
+            border: 1px solid #ddd;
+            padding: 8px;
+            text-align: left;
+        }
+        th {
+            background-color: #f2f2f2;
+        }
+    </style>
+</head>
+<body>
+    <h1>Excel文件分析</h1>
+    <div class="file-input">
+        <label for="file">选择Excel文件：</label>
+        <input type="file" id="file" accept=".xlsx">
+    </div>
+    <div class="result" id="result"></div>
+
+    <script>
+        document.getElementById('file').addEventListener('change', function(e) {
+            const file = e.target.files[0];
+            if (!file) return;
+
+            const reader = new FileReader();
+            reader.onload = function(e) {
+                const data = new Uint8Array(e.target.result);
+                const workbook = XLSX.read(data, { type: 'array' });
+
+                const resultDiv = document.getElementById('result');
+                resultDiv.innerHTML = '';
+
+                // 遍历所有工作表
+                workbook.SheetNames.forEach(sheetName => {
+                    const worksheet = workbook.Sheets[sheetName];
+                    const json = XLSX.utils.sheet_to_json(worksheet, { header: 1 });
+
+                    resultDiv.innerHTML += `<h2>工作表：${sheetName}</h2>`;
+                    resultDiv.innerHTML += `<p>行数：${json.length}</p>`;
+                    if (json.length > 0) {
+                        resultDiv.innerHTML += `<p>列数：${json[0].length}</p>`;
+                        resultDiv.innerHTML += `<h3>前5行数据：</h3>`;
+                        resultDiv.innerHTML += `<table>`;
+                        
+                        // 表头
+                        resultDiv.innerHTML += `<tr>`;
+                        for (let i = 0; i < json[0].length; i++) {
+                            resultDiv.innerHTML += `<th>列 ${i+1}</th>`;
+                        }
+                        resultDiv.innerHTML += `</tr>`;
+
+                        // 数据行
+                        const rowsToShow = Math.min(5, json.length);
+                        for (let i = 0; i < rowsToShow; i++) {
+                            resultDiv.innerHTML += `<tr>`;
+                            for (let j = 0; j < json[i].length; j++) {
+                                resultDiv.innerHTML += `<td>${json[i][j] || ''}</td>`;
+                            }
+                            resultDiv.innerHTML += `</tr>`;
+                        }
+                        resultDiv.innerHTML += `</table>`;
+                    }
+                });
+            };
+            reader.readAsArrayBuffer(file);
+        });
+    </script>
+</body>
+</html>

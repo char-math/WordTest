@@ -1,0 +1,1139 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>词汇量测评工具</title>
+    <script src="embedded_word_data.js"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <style>
+        body {
+            font-family: 'Microsoft YaHei', Arial, sans-serif;
+            background-color: #f5f5f5;
+            min-height: 100vh;
+        }
+        .container {
+            max-width: 800px;
+        }
+        .card {
+            border-radius: 12px;
+            box-shadow: 0 4px 12px rgba(0, 0, 0, 0.1);
+        }
+        .btn-primary {
+            background-color: #007bff;
+            border-color: #007bff;
+        }
+        .btn-primary:hover {
+            background-color: #0069d9;
+            border-color: #0062cc;
+        }
+        .option-btn {
+            width: 100%;
+            text-align: left;
+            margin-bottom: 10px;
+            padding: 12px;
+            border-radius: 8px;
+            border: 1px solid #dee2e6;
+            transition: all 0.3s ease;
+        }
+        .option-btn:hover {
+            background-color: #f8f9fa;
+            border-color: #007bff;
+        }
+        .option-btn.selected {
+            background-color: #e3f2fd;
+            border-color: #007bff;
+        }
+        .option-btn.correct {
+            background-color: #d4edda;
+            border-color: #c3e6cb;
+        }
+        .option-btn.incorrect {
+            background-color: #f8d7da;
+            border-color: #f5c6cb;
+        }
+        .progress-bar {
+            transition: width 0.5s ease;
+        }
+        .result-card {
+            animation: fadeIn 0.5s ease-in-out;
+        }
+        @keyframes fadeIn {
+            from { opacity: 0; transform: translateY(20px); }
+            to { opacity: 1; transform: translateY(0); }
+        }
+        .level-badge {
+            font-size: 1.2rem;
+            padding: 8px 16px;
+            border-radius: 20px;
+        }
+        .vocabulary-count {
+            font-size: 2rem;
+            font-weight: bold;
+            color: #007bff;
+        }
+    </style>
+</head>
+<body>
+    <div class="container py-5">
+        <!-- 登录页面 -->
+        <div id="login-page" class="card p-5 text-center d-none">
+            <h1 class="mb-4">用户登录</h1>
+            <form id="login-form" class="mx-auto" style="max-width: 400px;">
+                <div class="mb-3">
+                    <label for="login-username" class="form-label">用户名</label>
+                    <input type="text" class="form-control" id="login-username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="login-password" class="form-label">密码</label>
+                    <input type="password" class="form-control" id="login-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100">登录</button>
+                <p class="mt-3">还没有账号？ <a href="#" id="to-register">立即注册</a></p>
+                <p class="mt-2"><a href="#" id="back-to-start">返回首页</a></p>
+            </form>
+        </div>
+
+        <!-- 注册页面 -->
+        <div id="register-page" class="card p-5 text-center d-none">
+            <h1 class="mb-4">用户注册</h1>
+            <form id="register-form" class="mx-auto" style="max-width: 400px;">
+                <div class="mb-3">
+                    <label for="register-username" class="form-label">用户名</label>
+                    <input type="text" class="form-control" id="register-username" required>
+                </div>
+                <div class="mb-3">
+                    <label for="register-password" class="form-label">密码</label>
+                    <input type="password" class="form-control" id="register-password" required>
+                </div>
+                <button type="submit" class="btn btn-primary btn-lg w-100">注册</button>
+                <p class="mt-3">已有账号？ <a href="#" id="to-login">立即登录</a></p>
+                <p class="mt-2"><a href="#" id="back-to-start2">返回首页</a></p>
+            </form>
+        </div>
+
+        <!-- 开始页面 -->
+        <div id="start-page" class="card p-5 text-center">
+            <h1 class="mb-4">词汇量测评工具</h1>
+            <p class="mb-5">通过回答50个单词的释义，评估你的词汇水平和词汇量</p>
+            <div class="mb-4 text-left">
+                <h5>测评规则：</h5>
+                <ul class="list-unstyled">
+                    <li class="mb-2">• 共50题，涵盖小学、初中、高中各难度级别</li>
+                    <li class="mb-2">• 每题6个选项（1个正确 + 4个干扰 + "不认识"）</li>
+                    <li class="mb-2">• 结束条件：完成50题 或 连续答错4题 或 累计答错7题</li>
+                </ul>
+            </div>
+            <div class="d-flex gap-3 justify-content-center">
+                <button id="login-btn" class="btn btn-secondary btn-lg">登录/注册</button>
+                <button id="start-test" class="btn btn-primary btn-lg">开始测评</button>
+            </div>
+        </div>
+
+        <!-- 测评页面 -->
+        <div id="test-page" class="card p-5 d-none">
+            <div class="progress mb-4">
+                <div class="progress-bar bg-info" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="50">0/50</div>
+            </div>
+            <h2 class="mb-4">第 <span id="question-number">1</span> 题</h2>
+            <div class="mb-5">
+                <h3 class="word" id="word"></h3>
+                <p class="phonetic" id="phonetic"></p>
+            </div>
+            <div class="options" id="options"></div>
+            <div class="mt-5">
+                <button id="next-btn" class="btn btn-primary btn-lg d-none">下一题</button>
+            </div>
+        </div>
+
+        <!-- 结果页面 -->
+        <div id="result-page" class="card p-5 result-card d-none">
+            <h1 class="mb-4 text-center">测评结果</h1>
+            <div class="text-center mb-5">
+                <span class="level-badge bg-primary text-white mb-3 d-inline-block" id="level"></span>
+                <h2 class="mt-3">词汇量：<span class="vocabulary-count" id="vocabulary-count"></span></h2>
+            </div>
+            <div class="row mb-5">
+                <div class="col-md-4 text-center">
+                    <h4>答对题目</h4>
+                    <p class="display-4" id="correct-count"></p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h4>连续答错</h4>
+                    <p class="display-4" id="consecutive-incorrect"></p>
+                </div>
+                <div class="col-md-4 text-center">
+                    <h4>累计答错</h4>
+                    <p class="display-4" id="total-incorrect"></p>
+                </div>
+            </div>
+            <div class="mb-5">
+                <h4>各阶段掌握情况：</h4>
+                <div class="progress mb-2">
+                    <div class="progress-bar bg-success" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="primary-progress">小学：0%</div>
+                </div>
+                <div class="progress mb-2">
+                    <div class="progress-bar bg-warning" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="middle-progress">初中：0%</div>
+                </div>
+                <div class="progress mb-2">
+                    <div class="progress-bar bg-danger" role="progressbar" style="width: 0%" aria-valuenow="0" aria-valuemin="0" aria-valuemax="100" id="high-progress">高中：0%</div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button id="restart-test" class="btn btn-primary btn-lg">重新测评</button>
+                <button id="to-profile" class="btn btn-secondary btn-lg mt-3">查看历史记录</button>
+            </div>
+        </div>
+
+        <!-- 个人中心页面 -->
+        <div id="profile-page" class="card p-5 d-none">
+            <h1 class="mb-4 text-center">个人中心</h1>
+            <div class="mb-5">
+                <h4>用户信息</h4>
+                <div id="user-info" class="p-3 border rounded">
+                    <!-- 用户信息将在这里显示 -->
+                </div>
+            </div>
+            <div class="mb-5">
+                <h4>历史测评记录</h4>
+                <div id="test-records" class="p-3 border rounded">
+                    <!-- 历史测评记录将在这里显示 -->
+                </div>
+            </div>
+            <div class="text-center">
+                <button id="back-from-profile" class="btn btn-primary btn-lg">返回首页</button>
+                <button id="logout-btn" class="btn btn-secondary btn-lg mt-3">退出登录</button>
+                <button id="to-admin" class="btn btn-danger btn-lg mt-3" style="display: none;">管理员后台</button>
+            </div>
+        </div>
+
+        <!-- 管理员后台页面 -->
+        <div id="admin-page" class="card p-5 d-none">
+            <h1 class="mb-4 text-center">管理员后台</h1>
+            <div class="mb-5">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-target="user-management">用户管理</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-target="word-management">词库管理</a>
+                    </li>
+                </ul>
+                
+                <!-- 用户管理内容 -->
+                <div id="user-management" class="mt-4">
+                    <h4>用户列表</h4>
+                    <div id="user-list" class="p-3 border rounded">
+                        <!-- 用户列表将在这里显示 -->
+                    </div>
+                </div>
+                
+                <!-- 词库管理内容 -->
+                <div id="word-management" class="mt-4 d-none">
+                    <h4>词库管理</h4>
+                    <div class="mb-3">
+                        <label for="word-stage" class="form-label">阶段</label>
+                        <select id="word-stage" class="form-control">
+                            <option value="primary">小学</option>
+                            <option value="middle">初中</option>
+                            <option value="high">高中</option>
+                        </select>
+                    </div>
+                    <div class="mb-3">
+                        <label for="word-level" class="form-label">级别</label>
+                        <select id="word-level" class="form-control">
+                            <option value="1">1级</option>
+                            <option value="2">2级</option>
+                            <option value="3">3级</option>
+                        </select>
+                    </div>
+                    <button id="load-words" class="btn btn-primary">加载单词</button>
+                    <div id="word-list" class="p-3 border rounded mt-3">
+                        <!-- 单词列表将在这里显示 -->
+                    </div>
+                    <div class="mt-4">
+                        <h5>添加单词</h5>
+                        <form id="add-word-form">
+                            <div class="mb-3">
+                                <label for="new-word" class="form-label">单词</label>
+                                <input type="text" class="form-control" id="new-word" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="new-meaning" class="form-label">释义</label>
+                                <input type="text" class="form-control" id="new-meaning" required>
+                            </div>
+                            <div class="mb-3">
+                                <label for="new-phonetic" class="form-label">音标</label>
+                                <input type="text" class="form-control" id="new-phonetic">
+                            </div>
+                            <button type="submit" class="btn btn-primary">添加单词</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+            <div class="text-center">
+                <button id="back-from-admin" class="btn btn-primary btn-lg">返回个人中心</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        // 全局变量
+        let wordData = embeddedWordData;
+        let testQuestions = [];
+        let currentQuestionIndex = 0;
+        let correctCount = 0;
+        let consecutiveIncorrect = 0;
+        let totalIncorrect = 0;
+        let primaryCorrect = 0;
+        let middleCorrect = 0;
+        let highCorrect = 0;
+        let currentUser = null;
+        let token = null;
+
+        // 单词分布配置
+        const wordDistribution = [
+            { level: 'primary', difficulty: 1, count: 4 },
+            { level: 'primary', difficulty: 2, count: 6 },
+            { level: 'primary', difficulty: 3, count: 6 },
+            { level: 'middle', difficulty: 1, count: 6 },
+            { level: 'middle', difficulty: 2, count: 6 },
+            { level: 'middle', difficulty: 3, count: 6 },
+            { level: 'high', difficulty: 1, count: 6 },
+            { level: 'high', difficulty: 2, count: 6 },
+            { level: 'high', difficulty: 3, count: 4 }
+        ];
+
+        // 加载词库数据
+        function loadWordData() {
+            console.log('Word data loaded successfully');
+            console.log('Primary words:', wordData.primary.length);
+            console.log('Middle words:', wordData.middle.length);
+            console.log('High words:', wordData.high.length);
+        }
+
+        // 页面切换函数
+        function showPage(pageId) {
+            // 隐藏所有页面
+            document.querySelectorAll('.card').forEach(card => {
+                card.classList.add('d-none');
+            });
+            // 显示指定页面
+            document.getElementById(pageId).classList.remove('d-none');
+        }
+
+        // 生成测试题目
+        function generateTestQuestions() {
+            testQuestions = [];
+            
+            // 按照分布生成题目
+            wordDistribution.forEach(item => {
+                const { level, difficulty, count } = item;
+                const words = wordData[level];
+                
+                // 根据难度划分词汇
+                const totalWords = words.length;
+                const chunkSize = Math.ceil(totalWords / 3);
+                let startIndex, endIndex;
+                
+                switch (difficulty) {
+                    case 1:
+                        startIndex = 0;
+                        endIndex = chunkSize;
+                        break;
+                    case 2:
+                        startIndex = chunkSize;
+                        endIndex = chunkSize * 2;
+                        break;
+                    case 3:
+                        startIndex = chunkSize * 2;
+                        endIndex = totalWords;
+                        break;
+                }
+                
+                // 随机选择指定数量的单词
+                const availableWords = words.slice(startIndex, endIndex);
+                const selectedWords = [];
+                
+                while (selectedWords.length < count && availableWords.length > 0) {
+                    const randomIndex = Math.floor(Math.random() * availableWords.length);
+                    selectedWords.push(availableWords[randomIndex]);
+                    availableWords.splice(randomIndex, 1);
+                }
+                
+                // 为每个单词生成题目
+                selectedWords.forEach(word => {
+                    testQuestions.push({
+                        ...word,
+                        level,
+                        difficulty
+                    });
+                });
+            });
+            
+            console.log('Test questions generated:', testQuestions.length);
+        }
+
+        // 生成干扰选项
+        function generateDistractors(correctMeaning, level) {
+            const distractors = [];
+            const allWords = wordData[level];
+            
+            // 随机选择4个不同的释义作为干扰选项
+            while (distractors.length < 4) {
+                const randomIndex = Math.floor(Math.random() * allWords.length);
+                const distractor = allWords[randomIndex].meaning;
+                
+                if (distractor !== correctMeaning && !distractors.includes(distractor)) {
+                    distractors.push(distractor);
+                }
+            }
+            
+            return distractors;
+        }
+
+        // 显示当前题目
+        function showCurrentQuestion() {
+            const question = testQuestions[currentQuestionIndex];
+            document.getElementById('question-number').textContent = currentQuestionIndex + 1;
+            document.getElementById('word').textContent = question.word;
+            document.getElementById('phonetic').textContent = question.phonetic;
+            
+            // 生成选项
+            const correctMeaning = question.meaning;
+            const distractors = generateDistractors(correctMeaning, question.level);
+            const options = [correctMeaning, ...distractors, '不认识'];
+            
+            // 打乱选项顺序
+            for (let i = options.length - 1; i > 0; i--) {
+                const j = Math.floor(Math.random() * (i + 1));
+                [options[i], options[j]] = [options[j], options[i]];
+            }
+            
+            // 显示选项
+            const optionsContainer = document.getElementById('options');
+            optionsContainer.innerHTML = '';
+            
+            options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option;
+                button.dataset.index = index;
+                button.dataset.correct = option === correctMeaning;
+                
+                button.addEventListener('click', function() {
+                    // 移除其他选项的选中状态
+                    document.querySelectorAll('.option-btn').forEach(btn => {
+                        btn.classList.remove('selected');
+                    });
+                    
+                    // 添加当前选项的选中状态
+                    this.classList.add('selected');
+                    
+                    // 显示下一题按钮
+                    document.getElementById('next-btn').classList.remove('d-none');
+                });
+                
+                optionsContainer.appendChild(button);
+            });
+            
+            // 更新进度条
+            const progress = ((currentQuestionIndex + 1) / testQuestions.length) * 100;
+            const progressBar = document.querySelector('.progress-bar');
+            progressBar.style.width = `${progress}%`;
+            progressBar.textContent = `${currentQuestionIndex + 1}/${testQuestions.length}`;
+            progressBar.setAttribute('aria-valuenow', currentQuestionIndex + 1);
+        }
+
+        // 检查答案
+        function checkAnswer() {
+            const selectedButton = document.querySelector('.option-btn.selected');
+            if (!selectedButton) return false;
+            
+            const isCorrect = selectedButton.dataset.correct === 'true';
+            const isUnknown = selectedButton.textContent === '不认识';
+            
+            // 更新统计信息
+            if (isCorrect) {
+                correctCount++;
+                consecutiveIncorrect = 0;
+                
+                // 更新各阶段正确数
+                const question = testQuestions[currentQuestionIndex];
+                if (question.level === 'primary') {
+                    primaryCorrect++;
+                } else if (question.level === 'middle') {
+                    middleCorrect++;
+                } else if (question.level === 'high') {
+                    highCorrect++;
+                }
+            } else if (!isUnknown) {
+                consecutiveIncorrect++;
+                totalIncorrect++;
+            } else {
+                // 不认识，算作答错
+                consecutiveIncorrect++;
+                totalIncorrect++;
+            }
+            
+            // 标记选项
+            document.querySelectorAll('.option-btn').forEach(btn => {
+                if (btn.dataset.correct === 'true') {
+                    btn.classList.add('correct');
+                } else if (btn === selectedButton && !isCorrect) {
+                    btn.classList.add('incorrect');
+                }
+                btn.disabled = true;
+            });
+            
+            return true;
+        }
+
+        // 计算词汇量
+        function calculateVocabulary() {
+            // 计算各阶段掌握率
+            const primaryTotal = 4 + 6 + 6; // 小学总题数
+            const middleTotal = 6 + 6 + 6;  // 初中总题数
+            const highTotal = 6 + 6 + 4;    // 高中总题数
+            
+            const primaryRate = primaryTotal > 0 ? primaryCorrect / primaryTotal : 0;
+            const middleRate = middleTotal > 0 ? middleCorrect / middleTotal : 0;
+            const highRate = highTotal > 0 ? highCorrect / highTotal : 0;
+            
+            // 计算词汇量
+            const primaryVocab = primaryRate * 1000 * 1.25;
+            const middleVocab = middleRate * 2500 * 1.1;
+            const highVocab = highRate * 3500 * 1.1;
+            
+            const totalVocab = Math.round(primaryVocab + middleVocab + highVocab);
+            
+            return {
+                total: totalVocab,
+                primary: {
+                    correct: primaryCorrect,
+                    total: primaryTotal,
+                    rate: primaryRate
+                },
+                middle: {
+                    correct: middleCorrect,
+                    total: middleTotal,
+                    rate: middleRate
+                },
+                high: {
+                    correct: highCorrect,
+                    total: highTotal,
+                    rate: highRate
+                }
+            };
+        }
+
+        // 评估水平
+        function evaluateLevel() {
+            if (correctCount <= 10) {
+                return '入门级';
+            } else if (correctCount <= 20) {
+                return '小学水平';
+            } else if (correctCount <= 30) {
+                return '初中水平';
+            } else if (correctCount <= 40) {
+                return '高中水平';
+            } else {
+                return '优秀水平';
+            }
+        }
+
+        // 显示结果
+        function showResult() {
+            const vocabulary = calculateVocabulary();
+            const level = evaluateLevel();
+            
+            // 显示结果页面
+            document.getElementById('test-page').classList.add('d-none');
+            document.getElementById('result-page').classList.remove('d-none');
+            
+            // 填充结果数据
+            document.getElementById('level').textContent = level;
+            document.getElementById('vocabulary-count').textContent = vocabulary.total;
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('consecutive-incorrect').textContent = consecutiveIncorrect;
+            document.getElementById('total-incorrect').textContent = totalIncorrect;
+            
+            // 更新进度条
+            const primaryProgress = vocabulary.primary.rate * 100;
+            const middleProgress = vocabulary.middle.rate * 100;
+            const highProgress = vocabulary.high.rate * 100;
+            
+            const primaryBar = document.getElementById('primary-progress');
+            primaryBar.style.width = `${primaryProgress}%`;
+            primaryBar.textContent = `小学：${Math.round(primaryProgress)}%`;
+            primaryBar.setAttribute('aria-valuenow', primaryProgress);
+            
+            const middleBar = document.getElementById('middle-progress');
+            middleBar.style.width = `${middleProgress}%`;
+            middleBar.textContent = `初中：${Math.round(middleProgress)}%`;
+            middleBar.setAttribute('aria-valuenow', middleProgress);
+            
+            const highBar = document.getElementById('high-progress');
+            highBar.style.width = `${highProgress}%`;
+            highBar.textContent = `高中：${Math.round(highProgress)}%`;
+            highBar.setAttribute('aria-valuenow', highProgress);
+        }
+
+        // 检查是否达到结束条件
+        function checkEndCondition() {
+            return currentQuestionIndex >= testQuestions.length - 1 || 
+                   consecutiveIncorrect >= 4 || 
+                   totalIncorrect >= 7;
+        }
+
+        // 初始化事件监听
+        function initEventListeners() {
+            // 开始测评按钮
+            document.getElementById('start-test').addEventListener('click', function() {
+                generateTestQuestions();
+                currentQuestionIndex = 0;
+                correctCount = 0;
+                consecutiveIncorrect = 0;
+                totalIncorrect = 0;
+                primaryCorrect = 0;
+                middleCorrect = 0;
+                highCorrect = 0;
+                
+                document.getElementById('start-page').classList.add('d-none');
+                document.getElementById('test-page').classList.remove('d-none');
+                showCurrentQuestion();
+            });
+            
+            // 下一题按钮
+            document.getElementById('next-btn').addEventListener('click', function() {
+                if (checkAnswer()) {
+                    currentQuestionIndex++;
+                    
+                    if (checkEndCondition()) {
+                        showResult();
+                    } else {
+                        showCurrentQuestion();
+                        this.classList.add('d-none');
+                    }
+                }
+            });
+            
+            // 重新测评按钮
+            document.getElementById('restart-test').addEventListener('click', function() {
+                document.getElementById('result-page').classList.add('d-none');
+                document.getElementById('start-page').classList.remove('d-none');
+            });
+        }
+
+        // 初始化应用
+        function init() {
+            loadWordData();
+            initEventListeners();
+        }
+
+        // 初始化事件监听
+        function initEventListeners() {
+            // 开始测评按钮
+            document.getElementById('start-test').addEventListener('click', function() {
+                generateTestQuestions();
+                currentQuestionIndex = 0;
+                correctCount = 0;
+                consecutiveIncorrect = 0;
+                totalIncorrect = 0;
+                primaryCorrect = 0;
+                middleCorrect = 0;
+                highCorrect = 0;
+                
+                document.getElementById('start-page').classList.add('d-none');
+                document.getElementById('test-page').classList.remove('d-none');
+                showCurrentQuestion();
+            });
+            
+            // 下一题按钮
+            document.getElementById('next-btn').addEventListener('click', function() {
+                if (checkAnswer()) {
+                    currentQuestionIndex++;
+                    
+                    if (checkEndCondition()) {
+                        showResult();
+                    } else {
+                        showCurrentQuestion();
+                        this.classList.add('d-none');
+                    }
+                }
+            });
+            
+            // 重新测评按钮
+            document.getElementById('restart-test').addEventListener('click', function() {
+                document.getElementById('result-page').classList.add('d-none');
+                document.getElementById('start-page').classList.remove('d-none');
+            });
+
+            // 登录表单提交
+            document.getElementById('login-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const username = document.getElementById('login-username').value;
+                const password = document.getElementById('login-password').value;
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/users/login', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        currentUser = data.user;
+                        token = data.token;
+                        localStorage.setItem('token', token);
+                        localStorage.setItem('user', JSON.stringify(currentUser));
+                        alert('登录成功');
+                        showPage('start-page');
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (error) {
+                    console.error('登录失败:', error);
+                    alert('登录失败，请稍后重试');
+                }
+            });
+
+            // 注册表单提交
+            document.getElementById('register-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const username = document.getElementById('register-username').value;
+                const password = document.getElementById('register-password').value;
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/users/register', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json'
+                        },
+                        body: JSON.stringify({ username, password })
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        alert('注册成功，请登录');
+                        showPage('login-page');
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (error) {
+                    console.error('注册失败:', error);
+                    alert('注册失败，请稍后重试');
+                }
+            });
+
+            // 页面切换事件
+            document.getElementById('login-btn').addEventListener('click', function() {
+                if (currentUser) {
+                    showPage('profile-page');
+                    loadUserProfile();
+                } else {
+                    showPage('login-page');
+                }
+            });
+
+            document.getElementById('to-register').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('register-page');
+            });
+
+            document.getElementById('to-login').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('login-page');
+            });
+
+            document.getElementById('back-to-start').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('start-page');
+            });
+
+            document.getElementById('back-to-start2').addEventListener('click', function(e) {
+                e.preventDefault();
+                showPage('start-page');
+            });
+
+            document.getElementById('to-profile').addEventListener('click', function() {
+                if (currentUser) {
+                    showPage('profile-page');
+                    loadUserProfile();
+                } else {
+                    showPage('login-page');
+                }
+            });
+
+            document.getElementById('back-from-profile').addEventListener('click', function() {
+                showPage('start-page');
+            });
+
+            document.getElementById('logout-btn').addEventListener('click', function() {
+                currentUser = null;
+                token = null;
+                localStorage.removeItem('token');
+                localStorage.removeItem('user');
+                alert('退出登录成功');
+                showPage('start-page');
+            });
+
+            // 管理员后台相关事件
+            document.getElementById('to-admin').addEventListener('click', function() {
+                if (currentUser && currentUser.role === 'admin') {
+                    showPage('admin-page');
+                    loadUserList();
+                } else {
+                    alert('权限不足，需要管理员权限');
+                }
+            });
+
+            document.getElementById('back-from-admin').addEventListener('click', function() {
+                showPage('profile-page');
+            });
+
+            // 标签页切换
+            document.querySelectorAll('.nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    // 移除所有标签页的active类
+                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    // 添加当前标签页的active类
+                    this.classList.add('active');
+                    // 隐藏所有内容
+                    document.getElementById('user-management').classList.add('d-none');
+                    document.getElementById('word-management').classList.add('d-none');
+                    // 显示当前内容
+                    document.getElementById(this.dataset.target).classList.remove('d-none');
+                    // 如果切换到用户管理，加载用户列表
+                    if (this.dataset.target === 'user-management') {
+                        loadUserList();
+                    }
+                });
+            });
+
+            // 加载单词列表
+            document.getElementById('load-words').addEventListener('click', function() {
+                const stage = document.getElementById('word-stage').value;
+                const level = document.getElementById('word-level').value;
+                loadWordList(stage, level);
+            });
+
+            // 添加单词表单提交
+            document.getElementById('add-word-form').addEventListener('submit', async function(e) {
+                e.preventDefault();
+                const word = document.getElementById('new-word').value;
+                const meaning = document.getElementById('new-meaning').value;
+                const phonetic = document.getElementById('new-phonetic').value;
+                const stage = document.getElementById('word-stage').value;
+                const level = document.getElementById('word-level').value;
+
+                try {
+                    const response = await fetch('http://localhost:3000/api/words', {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        },
+                        body: JSON.stringify({ word, meaning, phonetic, stage, level: parseInt(level) })
+                    });
+
+                    const data = await response.json();
+                    if (response.ok) {
+                        alert('单词添加成功');
+                        // 重置表单
+                        this.reset();
+                        // 重新加载单词列表
+                        loadWordList(stage, level);
+                    } else {
+                        alert(data.message);
+                    }
+                } catch (error) {
+                    console.error('添加单词失败:', error);
+                    alert('添加单词失败，请稍后重试');
+                }
+            });
+        }
+
+        // 保存测评记录
+        async function saveTestRecord(score, vocabulary, level) {
+            if (!token) return;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/tests', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ score, vocabulary, level })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    console.log('测评记录保存成功');
+                } else {
+                    console.error('保存测评记录失败:', data.message);
+                }
+            } catch (error) {
+                console.error('保存测评记录失败:', error);
+            }
+        }
+
+        // 加载用户个人信息和历史测评记录
+        async function loadUserProfile() {
+            if (!token) return;
+
+            try {
+                // 显示用户信息
+                const userInfoDiv = document.getElementById('user-info');
+                userInfoDiv.innerHTML = `
+                    <p><strong>用户名：</strong>${currentUser.username}</p>
+                    <p><strong>角色：</strong>${currentUser.role === 'admin' ? '管理员' : '普通用户'}</p>
+                `;
+
+                // 如果是管理员，显示管理员后台按钮
+                if (currentUser.role === 'admin') {
+                    document.getElementById('to-admin').style.display = 'inline-block';
+                } else {
+                    document.getElementById('to-admin').style.display = 'none';
+                }
+
+                // 获取历史测评记录
+                const response = await fetch('http://localhost:3000/api/tests/history', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    const recordsDiv = document.getElementById('test-records');
+                    if (data.records.length === 0) {
+                        recordsDiv.innerHTML = '<p>暂无测评记录</p>';
+                    } else {
+                        let recordsHtml = '<table class="table table-striped">';
+                        recordsHtml += '<thead><tr><th>测评时间</th><th>答对题目</th><th>词汇量</th><th>水平</th></tr></thead><tbody>';
+                        
+                        data.records.forEach(record => {
+                            const date = new Date(record.createdAt).toLocaleString();
+                            recordsHtml += `<tr>
+                                <td>${date}</td>
+                                <td>${record.score}</td>
+                                <td>${record.vocabulary}</td>
+                                <td>${record.level}</td>
+                            </tr>`;
+                        });
+                        
+                        recordsHtml += '</tbody></table>';
+                        recordsDiv.innerHTML = recordsHtml;
+                    }
+                } else {
+                    console.error('获取历史测评记录失败:', data.message);
+                    document.getElementById('test-records').innerHTML = '<p>获取历史测评记录失败</p>';
+                }
+            } catch (error) {
+                console.error('加载用户个人信息失败:', error);
+                document.getElementById('user-info').innerHTML = '<p>获取用户信息失败</p>';
+                document.getElementById('test-records').innerHTML = '<p>获取历史测评记录失败</p>';
+            }
+        }
+
+        // 加载用户列表（管理员）
+        async function loadUserList() {
+            if (!token || currentUser.role !== 'admin') return;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    const userListDiv = document.getElementById('user-list');
+                    let userHtml = '<table class="table table-striped">';
+                    userHtml += '<thead><tr><th>ID</th><th>用户名</th><th>角色</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody>';
+                    
+                    data.users.forEach(user => {
+                        const date = new Date(user.createdAt).toLocaleString();
+                        const statusText = user.status === 'active' ? '活跃' : '禁用';
+                        const statusClass = user.status === 'active' ? 'btn-success' : 'btn-danger';
+                        const statusAction = user.status === 'active' ? '禁用' : '启用';
+                        
+                        userHtml += `<tr>
+                            <td>${user.id}</td>
+                            <td>${user.username}</td>
+                            <td>${user.role === 'admin' ? '管理员' : '普通用户'}</td>
+                            <td>${statusText}</td>
+                            <td>${date}</td>
+                            <td><button class="btn ${statusClass} btn-sm" onclick="toggleUserStatus(${user.id}, '${user.status}')">${statusAction}</button></td>
+                        </tr>`;
+                    });
+                    
+                    userHtml += '</tbody></table>';
+                    userListDiv.innerHTML = userHtml;
+                } else {
+                    console.error('获取用户列表失败:', data.message);
+                    document.getElementById('user-list').innerHTML = '<p>获取用户列表失败</p>';
+                }
+            } catch (error) {
+                console.error('加载用户列表失败:', error);
+                document.getElementById('user-list').innerHTML = '<p>加载用户列表失败</p>';
+            }
+        }
+
+        // 切换用户状态（管理员）
+        async function toggleUserStatus(userId, currentStatus) {
+            if (!token || currentUser.role !== 'admin') return;
+
+            try {
+                const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
+                const response = await fetch(`http://localhost:3000/api/admin/users/${userId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('用户状态更新成功');
+                    loadUserList();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('更新用户状态失败:', error);
+                alert('更新用户状态失败，请稍后重试');
+            }
+        }
+
+        // 加载单词列表
+        async function loadWordList(stage, level) {
+            try {
+                const response = await fetch(`http://localhost:3000/api/words?stage=${stage}&level=${level}`);
+                const data = await response.json();
+                if (response.ok) {
+                    const wordListDiv = document.getElementById('word-list');
+                    if (data.words.length === 0) {
+                        wordListDiv.innerHTML = '<p>暂无单词</p>';
+                    } else {
+                        let wordHtml = '<table class="table table-striped">';
+                        wordHtml += '<thead><tr><th>ID</th><th>单词</th><th>释义</th><th>音标</th><th>操作</th></tr></thead><tbody>';
+                        
+                        data.words.forEach(word => {
+                            wordHtml += `<tr>
+                                <td>${word.id}</td>
+                                <td>${word.word}</td>
+                                <td>${word.meaning}</td>
+                                <td>${word.phonetic || '-'}</td>
+                                <td><button class="btn btn-danger btn-sm" onclick="deleteWord(${word.id}, '${stage}', '${level}')">删除</button></td>
+                            </tr>`;
+                        });
+                        
+                        wordHtml += '</tbody></table>';
+                        wordListDiv.innerHTML = wordHtml;
+                    }
+                } else {
+                    console.error('获取单词列表失败:', data.message);
+                    document.getElementById('word-list').innerHTML = '<p>获取单词列表失败</p>';
+                }
+            } catch (error) {
+                console.error('加载单词列表失败:', error);
+                document.getElementById('word-list').innerHTML = '<p>加载单词列表失败</p>';
+            }
+        }
+
+        // 删除单词（管理员）
+        async function deleteWord(wordId, stage, level) {
+            if (!token || currentUser.role !== 'admin') return;
+
+            if (!confirm('确定要删除这个单词吗？')) return;
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/words/${wordId}`, {
+                    method: 'DELETE',
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('单词删除成功');
+                    loadWordList(stage, level);
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('删除单词失败:', error);
+                alert('删除单词失败，请稍后重试');
+            }
+        }
+
+        // 修改显示结果函数，添加保存测评记录的功能
+        function showResult() {
+            const vocabulary = calculateVocabulary();
+            const level = evaluateLevel();
+            
+            // 显示结果页面
+            document.getElementById('test-page').classList.add('d-none');
+            document.getElementById('result-page').classList.remove('d-none');
+            
+            // 填充结果数据
+            document.getElementById('level').textContent = level;
+            document.getElementById('vocabulary-count').textContent = vocabulary.total;
+            document.getElementById('correct-count').textContent = correctCount;
+            document.getElementById('consecutive-incorrect').textContent = consecutiveIncorrect;
+            document.getElementById('total-incorrect').textContent = totalIncorrect;
+            
+            // 更新进度条
+            const primaryProgress = vocabulary.primary.rate * 100;
+            const middleProgress = vocabulary.middle.rate * 100;
+            const highProgress = vocabulary.high.rate * 100;
+            
+            const primaryBar = document.getElementById('primary-progress');
+            primaryBar.style.width = `${primaryProgress}%`;
+            primaryBar.textContent = `小学：${Math.round(primaryProgress)}%`;
+            primaryBar.setAttribute('aria-valuenow', primaryProgress);
+            
+            const middleBar = document.getElementById('middle-progress');
+            middleBar.style.width = `${middleProgress}%`;
+            middleBar.textContent = `初中：${Math.round(middleProgress)}%`;
+            middleBar.setAttribute('aria-valuenow', middleProgress);
+            
+            const highBar = document.getElementById('high-progress');
+            highBar.style.width = `${highProgress}%`;
+            highBar.textContent = `高中：${Math.round(highProgress)}%`;
+            highBar.setAttribute('aria-valuenow', highProgress);
+
+            // 保存测评记录
+            saveTestRecord(correctCount, vocabulary.total, level);
+        }
+
+        // 初始化函数，检查本地存储中的登录状态
+        function init() {
+            loadWordData();
+            initEventListeners();
+            
+            // 检查本地存储中的登录状态
+            token = localStorage.getItem('token');
+            const userStr = localStorage.getItem('user');
+            if (token && userStr) {
+                currentUser = JSON.parse(userStr);
+                console.log('用户已登录:', currentUser);
+            }
+        }
+
+        // 启动应用
+        window.onload = init;
+    </script>
+</body>
+</html>
