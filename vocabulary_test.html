@@ -218,6 +218,9 @@
                     <li class="nav-item">
                         <a class="nav-link" data-target="word-management">词库管理</a>
                     </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-target="test-management">测试记录</a>
+                    </li>
                 </ul>
                 
                 <!-- 用户管理内容 -->
@@ -268,6 +271,14 @@
                             </div>
                             <button type="submit" class="btn btn-primary">添加单词</button>
                         </form>
+                    </div>
+                </div>
+                
+                <!-- 测试记录管理内容 -->
+                <div id="test-management" class="mt-4 d-none">
+                    <h4>测试记录列表</h4>
+                    <div id="test-records-list" class="p-3 border rounded">
+                        <!-- 测试记录列表将在这里显示 -->
                     </div>
                 </div>
             </div>
@@ -806,11 +817,16 @@
                     // 隐藏所有内容
                     document.getElementById('user-management').classList.add('d-none');
                     document.getElementById('word-management').classList.add('d-none');
+                    document.getElementById('test-management').classList.add('d-none');
                     // 显示当前内容
                     document.getElementById(this.dataset.target).classList.remove('d-none');
                     // 如果切换到用户管理，加载用户列表
                     if (this.dataset.target === 'user-management') {
                         loadUserList();
+                    }
+                    // 如果切换到测试记录，加载所有测试记录
+                    if (this.dataset.target === 'test-management') {
+                        loadAllTestRecords();
                     }
                 });
             });
@@ -1015,6 +1031,82 @@
             }
         }
 
+        // 加载用户列表（管理员）
+        async function loadUserList() {
+            if (!token || currentUser.role !== 'admin') return;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/admin/users', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    const userListDiv = document.getElementById('user-list');
+                    if (data.users.length === 0) {
+                        userListDiv.innerHTML = '<p>暂无用户</p>';
+                    } else {
+                        let userHtml = '<table class="table table-striped">';
+                        userHtml += '<thead><tr><th>ID</th><th>用户名</th><th>角色</th><th>状态</th><th>创建时间</th><th>操作</th></tr></thead><tbody>';
+                        
+                        data.users.forEach(user => {
+                            const statusText = user.status === 'active' ? '活跃' : '禁用';
+                            const statusClass = user.status === 'active' ? 'btn-warning' : 'btn-success';
+                            const newStatus = user.status === 'active' ? 'inactive' : 'active';
+                            const statusChangeText = user.status === 'active' ? '禁用' : '启用';
+                            
+                            userHtml += `<tr>
+                                <td>${user.id}</td>
+                                <td>${user.username}</td>
+                                <td>${user.role === 'admin' ? '管理员' : '普通用户'}</td>
+                                <td>${statusText}</td>
+                                <td>${new Date(user.createdAt).toLocaleString()}</td>
+                                <td><button class="btn ${statusClass} btn-sm" onclick="updateUserStatus(${user.id}, '${newStatus}')">${statusChangeText}</button></td>
+                            </tr>`;
+                        });
+                        
+                        userHtml += '</tbody></table>';
+                        userListDiv.innerHTML = userHtml;
+                    }
+                } else {
+                    console.error('获取用户列表失败:', data.message);
+                    document.getElementById('user-list').innerHTML = '<p>获取用户列表失败</p>';
+                }
+            } catch (error) {
+                console.error('加载用户列表失败:', error);
+                document.getElementById('user-list').innerHTML = '<p>加载用户列表失败</p>';
+            }
+        }
+
+        // 更新用户状态（管理员）
+        async function updateUserStatus(userId, newStatus) {
+            if (!token || currentUser.role !== 'admin') return;
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/admin/users/${userId}/status`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ status: newStatus })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('用户状态更新成功');
+                    loadUserList();
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('更新用户状态失败:', error);
+                alert('更新用户状态失败，请稍后重试');
+            }
+        }
+
         // 加载单词列表
         async function loadWordList(stage, level) {
             try {
@@ -1075,6 +1167,50 @@
             } catch (error) {
                 console.error('删除单词失败:', error);
                 alert('删除单词失败，请稍后重试');
+            }
+        }
+
+        // 加载所有测试记录（管理员）
+        async function loadAllTestRecords() {
+            if (!token || currentUser.role !== 'admin') return;
+
+            try {
+                const response = await fetch('http://localhost:3000/api/tests', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    const recordsDiv = document.getElementById('test-records-list');
+                    if (data.records.length === 0) {
+                        recordsDiv.innerHTML = '<p>暂无测试记录</p>';
+                    } else {
+                        let recordsHtml = '<table class="table table-striped">';
+                        recordsHtml += '<thead><tr><th>测试时间</th><th>用户ID</th><th>答对题目</th><th>词汇量</th><th>水平</th></tr></thead><tbody>';
+                        
+                        data.records.forEach(record => {
+                            const date = new Date(record.createdAt).toLocaleString();
+                            recordsHtml += `<tr>
+                                <td>${date}</td>
+                                <td>${record.userId}</td>
+                                <td>${record.score}</td>
+                                <td>${record.vocabulary}</td>
+                                <td>${record.level}</td>
+                            </tr>`;
+                        });
+                        
+                        recordsHtml += '</tbody></table>';
+                        recordsDiv.innerHTML = recordsHtml;
+                    }
+                } else {
+                    console.error('获取所有测试记录失败:', data.message);
+                    document.getElementById('test-records-list').innerHTML = '<p>获取测试记录失败</p>';
+                }
+            } catch (error) {
+                console.error('加载测试记录失败:', error);
+                document.getElementById('test-records-list').innerHTML = '<p>加载测试记录失败</p>';
             }
         }
 
