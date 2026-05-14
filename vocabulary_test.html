@@ -6,6 +6,8 @@
     <title>词汇量测评工具</title>
     <script src="embedded_word_data.js"></script>
     <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/js/bootstrap.bundle.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
     <style>
         body {
             font-family: 'Microsoft YaHei', Arial, sans-serif;
@@ -186,10 +188,11 @@
         <!-- 结果页面 -->
         <div id="result-page" class="card p-5 result-card d-none">
             <h1 class="mb-4 text-center">测评结果</h1>
-            <div class="text-center mb-5">
+            <div class="text-center mb-3">
                 <span class="level-badge bg-primary text-white mb-3 d-inline-block" id="level"></span>
                 <h2 class="mt-3">词汇量：<span class="vocabulary-count" id="vocabulary-count"></span></h2>
             </div>
+            <div id="end-reason" class="text-center mb-4 text-muted small"></div>
             <div class="row mb-5">
                 <div class="col-md-4 text-center">
                     <h4>答对题目</h4>
@@ -225,19 +228,47 @@
         <!-- 个人中心页面 -->
         <div id="profile-page" class="card p-5 d-none">
             <h1 class="mb-4 text-center">个人中心</h1>
-            <div class="mb-5">
+            <div class="mb-4">
                 <h4>用户信息</h4>
                 <div id="user-info" class="p-3 border rounded">
                     <!-- 用户信息将在这里显示 -->
                 </div>
             </div>
-            <div class="mb-5">
-                <h4>历史测评记录</h4>
-                <div id="test-records" class="p-3 border rounded">
-                    <!-- 历史测评记录将在这里显示 -->
+            <div class="mb-4">
+                <ul class="nav nav-tabs">
+                    <li class="nav-item">
+                        <a class="nav-link active" data-target="profile-records" id="tab-records">历史记录</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-target="profile-chart" id="tab-chart">水平变化</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" data-target="profile-wrong" id="tab-wrong">错题本</a>
+                    </li>
+                </ul>
+                <div id="profile-records" class="mt-3">
+                    <h5>历史测评记录</h5>
+                    <div id="test-records" class="p-3 border rounded">
+                        <!-- 历史测评记录将在这里显示 -->
+                    </div>
+                </div>
+                <div id="profile-chart" class="mt-3 d-none">
+                    <h5>词汇量变化趋势</h5>
+                    <div id="vocabulary-chart-container" class="p-3 border rounded">
+                        <canvas id="vocabulary-chart"></canvas>
+                    </div>
+                </div>
+                <div id="profile-wrong" class="mt-3 d-none">
+                    <h5>错题本 <span id="wrong-count" class="badge bg-danger">0</span></h5>
+                    <div id="wrong-words-list" class="p-3 border rounded" style="max-height: 400px; overflow-y: auto;">
+                        <!-- 错题列表将在这里显示 -->
+                    </div>
+                    <div class="mt-3">
+                        <button id="clear-wrong-btn" class="btn btn-outline-danger">清空错题本</button>
+                    </div>
                 </div>
             </div>
-            <div class="text-center">
+            <div class="text-center mt-4">
                 <button id="back-from-profile" class="btn btn-primary btn-lg">返回首页</button>
                 <button id="logout-btn" class="btn btn-secondary btn-lg mt-3">退出登录</button>
                 <button id="to-admin" class="btn btn-danger btn-lg mt-3" style="display: none;">管理员后台</button>
@@ -271,43 +302,103 @@
                 <!-- 词库管理内容 -->
                 <div id="word-management" class="mt-4 d-none">
                     <h4>词库管理</h4>
-                    <div class="mb-3">
-                        <label for="word-stage" class="form-label">阶段</label>
-                        <select id="word-stage" class="form-control">
-                            <option value="primary">小学</option>
-                            <option value="middle">初中</option>
-                            <option value="high">高中</option>
-                        </select>
+                    <div class="row mb-3">
+                        <div class="col-md-4">
+                            <label for="word-stage" class="form-label">阶段</label>
+                            <select id="word-stage" class="form-control">
+                                <option value="all">全部</option>
+                                <option value="primary">小学</option>
+                                <option value="middle">初中</option>
+                                <option value="high">高中</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label for="word-level" class="form-label">级别</label>
+                            <select id="word-level" class="form-control">
+                                <option value="all">全部</option>
+                                <option value="1">1级</option>
+                                <option value="2">2级</option>
+                                <option value="3">3级</option>
+                            </select>
+                        </div>
+                        <div class="col-md-4">
+                            <label class="form-label">&nbsp;</label>
+                            <button id="load-words" class="btn btn-primary w-100">加载单词</button>
+                        </div>
                     </div>
-                    <div class="mb-3">
-                        <label for="word-level" class="form-label">级别</label>
-                        <select id="word-level" class="form-control">
-                            <option value="1">1级</option>
-                            <option value="2">2级</option>
-                            <option value="3">3级</option>
-                        </select>
-                    </div>
-                    <button id="load-words" class="btn btn-primary">加载单词</button>
-                    <div id="word-list" class="p-3 border rounded mt-3">
+                    <div id="word-list" class="p-3 border rounded mt-3" style="overflow-x: auto;">
                         <!-- 单词列表将在这里显示 -->
                     </div>
                     <div class="mt-4">
                         <h5>添加单词</h5>
                         <form id="add-word-form">
-                            <div class="mb-3">
-                                <label for="new-word" class="form-label">单词</label>
-                                <input type="text" class="form-control" id="new-word" required>
+                            <div class="row">
+                                <div class="col-md-3">
+                                    <label for="new-word" class="form-label">单词</label>
+                                    <input type="text" class="form-control" id="new-word" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="new-phonetic" class="form-label">音标</label>
+                                    <input type="text" class="form-control" id="new-phonetic">
+                                </div>
+                                <div class="col-md-3">
+                                    <label for="new-meaning" class="form-label">释义</label>
+                                    <input type="text" class="form-control" id="new-meaning" required>
+                                </div>
+                                <div class="col-md-3">
+                                    <label class="form-label">&nbsp;</label>
+                                    <button type="submit" class="btn btn-primary w-100">添加单词</button>
+                                </div>
                             </div>
-                            <div class="mb-3">
-                                <label for="new-meaning" class="form-label">释义</label>
-                                <input type="text" class="form-control" id="new-meaning" required>
-                            </div>
-                            <div class="mb-3">
-                                <label for="new-phonetic" class="form-label">音标</label>
-                                <input type="text" class="form-control" id="new-phonetic">
-                            </div>
-                            <button type="submit" class="btn btn-primary">添加单词</button>
                         </form>
+                    </div>
+                    <!-- 编辑单词模态框 -->
+                    <div class="modal fade" id="edit-word-modal" tabindex="-1" aria-labelledby="edit-word-modal-label" aria-hidden="true">
+                        <div class="modal-dialog">
+                            <div class="modal-content">
+                                <div class="modal-header">
+                                    <h5 class="modal-title" id="edit-word-modal-label">编辑单词</h5>
+                                    <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                </div>
+                                <div class="modal-body">
+                                    <form id="edit-word-form">
+                                        <input type="hidden" id="edit-word-id">
+                                        <div class="mb-3">
+                                            <label for="edit-word" class="form-label">单词</label>
+                                            <input type="text" class="form-control" id="edit-word" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="edit-phonetic" class="form-label">音标</label>
+                                            <input type="text" class="form-control" id="edit-phonetic">
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="edit-meaning" class="form-label">释义</label>
+                                            <input type="text" class="form-control" id="edit-meaning" required>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="edit-stage" class="form-label">阶段</label>
+                                            <select id="edit-stage" class="form-control">
+                                                <option value="primary">小学</option>
+                                                <option value="middle">初中</option>
+                                                <option value="high">高中</option>
+                                            </select>
+                                        </div>
+                                        <div class="mb-3">
+                                            <label for="edit-level" class="form-label">级别</label>
+                                            <select id="edit-level" class="form-control">
+                                                <option value="1">1级</option>
+                                                <option value="2">2级</option>
+                                                <option value="3">3级</option>
+                                            </select>
+                                        </div>
+                                    </form>
+                                </div>
+                                <div class="modal-footer">
+                                    <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">取消</button>
+                                    <button type="button" class="btn btn-primary" id="save-edit-btn">保存</button>
+                                </div>
+                            </div>
+                        </div>
                     </div>
                 </div>
                 
@@ -338,6 +429,7 @@
         let highCorrect = 0;
         let currentUser = null;
         let token = null;
+        let wrongWords = []; // 存储错题
         
         // PK相关变量
         let pkQuestions = [];
@@ -348,6 +440,38 @@
         let timeLimit = 10; // 每题时间限制（秒）
         let timerInterval = null;
         let remainingTime = timeLimit;
+
+        // 页面加载时恢复登录状态
+        function restoreLoginState() {
+            const savedToken = localStorage.getItem('token');
+            const savedUser = localStorage.getItem('user');
+            
+            if (savedToken && savedUser) {
+                token = savedToken;
+                currentUser = JSON.parse(savedUser);
+                
+                // 更新UI显示用户信息
+                const userInfoDiv = document.getElementById('user-info');
+                if (userInfoDiv) {
+                    userInfoDiv.innerHTML = `
+                        <p><strong>用户名：</strong>${currentUser.username}</p>
+                        <p><strong>角色：</strong>${currentUser.role === 'admin' ? '管理员' : '普通用户'}</p>
+                    `;
+                }
+                
+                // 如果是管理员，显示管理员后台按钮
+                const toAdminBtn = document.getElementById('to-admin');
+                if (toAdminBtn) {
+                    if (currentUser.role === 'admin') {
+                        toAdminBtn.style.display = 'inline-block';
+                    } else {
+                        toAdminBtn.style.display = 'none';
+                    }
+                }
+                
+                console.log('已恢复登录状态:', currentUser.username);
+            }
+        }
 
         // 单词分布配置
         const wordDistribution = [
@@ -764,10 +888,14 @@
             } else if (!isUnknown) {
                 consecutiveIncorrect++;
                 totalIncorrect++;
+                // 保存错题
+                saveWrongWord(testQuestions[currentQuestionIndex]);
             } else {
                 // 不认识，算作答错
                 consecutiveIncorrect++;
                 totalIncorrect++;
+                // 保存错题
+                saveWrongWord(testQuestions[currentQuestionIndex]);
             }
             
             // 标记选项
@@ -852,6 +980,19 @@
             document.getElementById('consecutive-incorrect').textContent = consecutiveIncorrect;
             document.getElementById('total-incorrect').textContent = totalIncorrect;
             
+            // 显示结束原因
+            const endReasonDiv = document.getElementById('end-reason');
+            if (consecutiveIncorrect >= 4) {
+                endReasonDiv.textContent = '测评因连续答错4题提前结束';
+                endReasonDiv.className = 'text-center mb-4 text-danger small';
+            } else if (totalIncorrect >= 7) {
+                endReasonDiv.textContent = '测评因累计答错7题提前结束';
+                endReasonDiv.className = 'text-center mb-4 text-warning small';
+            } else {
+                endReasonDiv.textContent = '完成全部50题测评';
+                endReasonDiv.className = 'text-center mb-4 text-success small';
+            }
+            
             // 更新进度条
             const primaryProgress = vocabulary.primary.rate * 100;
             const middleProgress = vocabulary.middle.rate * 100;
@@ -880,48 +1021,10 @@
                    totalIncorrect >= 7;
         }
 
-        // 初始化事件监听
-        function initEventListeners() {
-            // 开始测评按钮
-            document.getElementById('start-test').addEventListener('click', function() {
-                generateTestQuestions();
-                currentQuestionIndex = 0;
-                correctCount = 0;
-                consecutiveIncorrect = 0;
-                totalIncorrect = 0;
-                primaryCorrect = 0;
-                middleCorrect = 0;
-                highCorrect = 0;
-                
-                document.getElementById('start-page').classList.add('d-none');
-                document.getElementById('test-page').classList.remove('d-none');
-                showCurrentQuestion();
-            });
-            
-            // 下一题按钮
-            document.getElementById('next-btn').addEventListener('click', function() {
-                if (checkAnswer()) {
-                    currentQuestionIndex++;
-                    
-                    if (checkEndCondition()) {
-                        showResult();
-                    } else {
-                        showCurrentQuestion();
-                        this.classList.add('d-none');
-                    }
-                }
-            });
-            
-            // 重新测评按钮
-            document.getElementById('restart-test').addEventListener('click', function() {
-                document.getElementById('result-page').classList.add('d-none');
-                document.getElementById('start-page').classList.remove('d-none');
-            });
-        }
-
         // 初始化应用
         function init() {
             loadWordData();
+            restoreLoginState();
             initEventListeners();
         }
 
@@ -970,7 +1073,7 @@
                 const password = document.getElementById('login-password').value;
 
                 try {
-                    const response = await fetch('http://192.168.1.115:3000/api/users/login', {
+                    const response = await fetch('http://localhost:3000/api/users/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1002,7 +1105,7 @@
                 const password = document.getElementById('register-password').value;
 
                 try {
-                    const response = await fetch('http://192.168.1.115:3000/api/users/register', {
+                    const response = await fetch('http://localhost:3000/api/users/register', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1069,10 +1172,30 @@
             document.getElementById('logout-btn').addEventListener('click', function() {
                 currentUser = null;
                 token = null;
+                wrongWords = [];
                 localStorage.removeItem('token');
                 localStorage.removeItem('user');
                 alert('退出登录成功');
                 showPage('start-page');
+            });
+
+            // 个人中心标签页切换
+            document.querySelectorAll('#profile-page .nav-link').forEach(link => {
+                link.addEventListener('click', function(e) {
+                    e.preventDefault();
+                    document.querySelectorAll('#profile-page .nav-link').forEach(l => l.classList.remove('active'));
+                    this.classList.add('active');
+                    document.getElementById('profile-records').classList.add('d-none');
+                    document.getElementById('profile-chart').classList.add('d-none');
+                    document.getElementById('profile-wrong').classList.add('d-none');
+                    document.getElementById(this.dataset.target).classList.remove('d-none');
+                    
+                    if (this.dataset.target === 'profile-chart') {
+                        drawVocabularyChart();
+                    } else if (this.dataset.target === 'profile-wrong') {
+                        loadWrongWords();
+                    }
+                });
             });
 
             // 管理员后台相关事件
@@ -1089,12 +1212,12 @@
                 showPage('profile-page');
             });
 
-            // 标签页切换
-            document.querySelectorAll('.nav-link').forEach(link => {
+            // 管理员后台标签页切换
+            document.querySelectorAll('#admin-page .nav-link').forEach(link => {
                 link.addEventListener('click', function(e) {
                     e.preventDefault();
                     // 移除所有标签页的active类
-                    document.querySelectorAll('.nav-link').forEach(l => l.classList.remove('active'));
+                    document.querySelectorAll('#admin-page .nav-link').forEach(l => l.classList.remove('active'));
                     // 添加当前标签页的active类
                     this.classList.add('active');
                     // 隐藏所有内容
@@ -1131,7 +1254,7 @@
                 const level = document.getElementById('word-level').value;
 
                 try {
-                    const response = await fetch('http://192.168.1.115:3000/api/words', {
+                    const response = await fetch('http://localhost:3000/api/words', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1232,7 +1355,7 @@
             if (!token) return;
 
             try {
-                const response = await fetch('http://192.168.1.115:3000/api/tests', {
+                const response = await fetch('http://localhost:3000/api/tests', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1253,8 +1376,170 @@
         }
 
         // 加载用户个人信息和历史测评记录
+        
+        // 保存错题
+        function saveWrongWord(question) {
+            const key = currentUser ? `wrong_words_${currentUser.id}` : 'wrong_words_guest';
+            let existingWords = JSON.parse(localStorage.getItem(key) || '[]');
+            
+            console.log('保存错题:', question.word, '到key:', key, '当前已有:', existingWords.length);
+            
+            // 检查是否已存在
+            if (!existingWords.find(w => w.word === question.word)) {
+                existingWords.push({
+                    word: question.word,
+                    meaning: question.meaning,
+                    phonetic: question.phonetic,
+                    level: question.level,
+                    wrongTime: new Date().toISOString()
+                });
+                localStorage.setItem(key, JSON.stringify(existingWords));
+                console.log('错题已保存，当前总数:', existingWords.length);
+            } else {
+                console.log('错题已存在，跳过保存');
+            }
+        }
+        
+        // 加载错题列表
+        function loadWrongWords() {
+            const key = currentUser ? `wrong_words_${currentUser.id}` : 'wrong_words_guest';
+            const words = JSON.parse(localStorage.getItem(key) || '[]');
+            
+            console.log('加载错题列表，从key:', key, '加载到', words.length, '个错题');
+            
+            const listDiv = document.getElementById('wrong-words-list');
+            const countBadge = document.getElementById('wrong-count');
+            
+            countBadge.textContent = words.length;
+            
+            if (words.length === 0) {
+                listDiv.innerHTML = '<p class="text-muted">暂无错题记录，继续保持！</p>';
+                return;
+            }
+            
+            let html = '<table class="table table-sm table-striped">';
+            html += '<thead><tr><th>单词</th><th>音标</th><th>释义</th><th>难度</th></tr></thead><tbody>';
+            
+            words.forEach(w => {
+                const levelText = w.level === 'primary' ? '小学' : w.level === 'middle' ? '初中' : '高中';
+                const levelClass = w.level === 'primary' ? 'success' : w.level === 'middle' ? 'warning' : 'danger';
+                html += `<tr>
+                    <td><strong>${w.word}</strong></td>
+                    <td>${w.phonetic || '-'}</td>
+                    <td>${w.meaning}</td>
+                    <td><span class="badge bg-${levelClass}">${levelText}</span></td>
+                </tr>`;
+            });
+            
+            html += '</tbody></table>';
+            listDiv.innerHTML = html;
+        }
+        
+        // 清空错题本
+        document.addEventListener('click', function(e) {
+            if (e.target && e.target.id === 'clear-wrong-btn') {
+                if (confirm('确定要清空所有错题记录吗？')) {
+                    const key = currentUser ? `wrong_words_${currentUser.id}` : 'wrong_words_guest';
+                    localStorage.removeItem(key);
+                    loadWrongWords();
+                    alert('错题本已清空');
+                }
+            }
+        });
+        
+        // 历史测评记录数据（用于绘制图表）
+        let testHistoryData = [];
+        
+        // 绘制词汇量变化折线图
+        function drawVocabularyChart() {
+            const ctx = document.getElementById('vocabulary-chart').getContext('2d');
+            
+            if (!testHistoryData || testHistoryData.length === 0) {
+                document.getElementById('vocabulary-chart-container').innerHTML = '<p class="text-muted text-center py-4">暂无测评记录，请先完成一次测评</p>';
+                return;
+            }
+            
+            const labels = testHistoryData.map(record => {
+                const date = new Date(record.createdAt);
+                return `${date.getMonth() + 1}/${date.getDate()} ${date.getHours()}:${date.getMinutes().toString().padStart(2, '0')}`;
+            });
+            
+            const vocabularyData = testHistoryData.map(record => record.vocabulary);
+            const scoreData = testHistoryData.map(record => record.score);
+            
+            new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: labels,
+                    datasets: [
+                        {
+                            label: '词汇量',
+                            data: vocabularyData,
+                            borderColor: 'rgb(54, 162, 235)',
+                            backgroundColor: 'rgba(54, 162, 235, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'y'
+                        },
+                        {
+                            label: '答对题数',
+                            data: scoreData,
+                            borderColor: 'rgb(75, 192, 192)',
+                            backgroundColor: 'rgba(75, 192, 192, 0.1)',
+                            tension: 0.3,
+                            fill: true,
+                            yAxisID: 'y1'
+                        }
+                    ]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    scales: {
+                        y: {
+                            type: 'linear',
+                            position: 'left',
+                            title: {
+                                display: true,
+                                text: '词汇量'
+                            },
+                            beginAtZero: true
+                        },
+                        y1: {
+                            type: 'linear',
+                            position: 'right',
+                            title: {
+                                display: true,
+                                text: '答对题数'
+                            },
+                            beginAtZero: true,
+                            max: 50
+                        }
+                    },
+                    plugins: {
+                        legend: {
+                            position: 'top'
+                        },
+                        tooltip: {
+                            mode: 'index',
+                            intersect: false
+                        }
+                    },
+                    interaction: {
+                        mode: 'nearest',
+                        axis: 'x',
+                        intersect: false
+                    }
+                }
+            });
+        }
+        
         async function loadUserProfile() {
-            if (!token) return;
+            if (!token) {
+                document.getElementById('user-info').innerHTML = '<p class="text-danger">请先登录查看个人信息</p>';
+                document.getElementById('test-records').innerHTML = '<p class="text-danger">请先登录查看历史记录</p>';
+                return;
+            }
 
             try {
                 // 显示用户信息
@@ -1271,8 +1556,11 @@
                     document.getElementById('to-admin').style.display = 'none';
                 }
 
+                // 加载错题本
+                loadWrongWords();
+
                 // 获取历史测评记录
-                const response = await fetch('http://192.168.1.115:3000/api/tests/history', {
+                const response = await fetch('http://localhost:3000/api/tests/history', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1280,11 +1568,14 @@
 
                 const data = await response.json();
                 if (response.ok) {
+                    // 保存历史记录数据用于绘制图表
+                    testHistoryData = data.records || [];
+                    
                     const recordsDiv = document.getElementById('test-records');
-                    if (data.records.length === 0) {
-                        recordsDiv.innerHTML = '<p>暂无测评记录</p>';
+                    if (!data.records || data.records.length === 0) {
+                        recordsDiv.innerHTML = '<p>暂无测评记录，请先完成一次测评</p>';
                     } else {
-                        let recordsHtml = '<table class="table table-striped">';
+                        let recordsHtml = '<table class="table table-striped table-sm">';
                         recordsHtml += '<thead><tr><th>测评时间</th><th>答对题目</th><th>词汇量</th><th>水平</th></tr></thead><tbody>';
                         
                         data.records.forEach(record => {
@@ -1302,12 +1593,12 @@
                     }
                 } else {
                     console.error('获取历史测评记录失败:', data.message);
-                    document.getElementById('test-records').innerHTML = '<p>获取历史测评记录失败</p>';
+                    document.getElementById('test-records').innerHTML = '<p class="text-danger">获取历史测评记录失败: ' + data.message + '</p>';
                 }
             } catch (error) {
                 console.error('加载用户个人信息失败:', error);
-                document.getElementById('user-info').innerHTML = '<p>获取用户信息失败</p>';
-                document.getElementById('test-records').innerHTML = '<p>获取历史测评记录失败</p>';
+                document.getElementById('user-info').innerHTML = '<p class="text-danger">获取用户信息失败，请检查网络连接</p>';
+                document.getElementById('test-records').innerHTML = '<p class="text-danger">获取历史测评记录失败，请检查网络连接</p>';
             }
         }
 
@@ -1316,7 +1607,7 @@
             if (!token || currentUser.role !== 'admin') return;
 
             try {
-                const response = await fetch('http://192.168.1.115:3000/api/admin/users', {
+                const response = await fetch('http://localhost:3000/api/admin/users', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1362,7 +1653,7 @@
 
             try {
                 const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-                const response = await fetch(`http://192.168.1.115:3000/api/admin/users/${userId}/status`, {
+                const response = await fetch(`http://localhost:3000/api/admin/users/${userId}/status`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1389,7 +1680,7 @@
             if (!token || currentUser.role !== 'admin') return;
 
             try {
-                const response = await fetch('http://192.168.1.115:3000/api/admin/users', {
+                const response = await fetch('http://localhost:3000/api/admin/users', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1438,7 +1729,7 @@
             if (!token || currentUser.role !== 'admin') return;
 
             try {
-                const response = await fetch(`http://192.168.1.115:3000/api/admin/users/${userId}/status`, {
+                const response = await fetch(`http://localhost:3000/api/admin/users/${userId}/status`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1463,23 +1754,36 @@
         // 加载单词列表
         async function loadWordList(stage, level) {
             try {
-                const response = await fetch(`http://192.168.1.115:3000/api/words?stage=${stage}&level=${level}`);
+                let url = 'http://localhost:3000/api/words';
+                const params = [];
+                if (stage && stage !== 'all') params.push(`stage=${stage}`);
+                if (level && level !== 'all') params.push(`level=${level}`);
+                if (params.length > 0) url += '?' + params.join('&');
+                
+                const response = await fetch(url);
                 const data = await response.json();
                 if (response.ok) {
                     const wordListDiv = document.getElementById('word-list');
                     if (data.words.length === 0) {
                         wordListDiv.innerHTML = '<p>暂无单词</p>';
                     } else {
-                        let wordHtml = '<table class="table table-striped">';
-                        wordHtml += '<thead><tr><th>ID</th><th>单词</th><th>释义</th><th>音标</th><th>操作</th></tr></thead><tbody>';
+                        let wordHtml = '<table class="table table-striped table-sm" style="width: 100%;">';
+                        wordHtml += '<thead><tr style="font-size: 12px;"><th style="width: 60px;">ID</th><th style="width: 120px;">单词</th><th style="width: 100px;">音标</th><th style="min-width: 200px;">释义</th><th style="width: 60px;">阶段</th><th style="width: 60px;">级别</th><th style="width: 100px;">操作</th></tr></thead><tbody>';
                         
                         data.words.forEach(word => {
-                            wordHtml += `<tr>
+                            const stageText = word.stage === 'primary' ? '小学' : word.stage === 'middle' ? '初中' : '高中';
+                            const shortMeaning = word.meaning.length > 50 ? word.meaning.substring(0, 50) + '...' : word.meaning;
+                            wordHtml += `<tr style="font-size: 12px;">
                                 <td>${word.id}</td>
                                 <td>${word.word}</td>
-                                <td>${word.meaning}</td>
-                                <td>${word.phonetic || '-'}</td>
-                                <td><button class="btn btn-danger btn-sm" onclick="deleteWord(${word.id}, '${stage}', '${level}')">删除</button></td>
+                                <td style="font-family: monospace;">${word.phonetic || '-'}</td>
+                                <td title="${word.meaning}">${shortMeaning}</td>
+                                <td>${stageText}</td>
+                                <td>${word.level}级</td>
+                                <td>
+                                    <button class="btn btn-warning btn-xs me-1" style="padding: 2px 6px; font-size: 11px;" onclick="editWord(${word.id}, '${word.word}', '${word.phonetic || ''}', '${word.meaning}', '${word.stage}', ${word.level})">编辑</button>
+                                    <button class="btn btn-danger btn-xs" style="padding: 2px 6px; font-size: 11px;" onclick="deleteWord(${word.id}, '${stage}', '${level}')">删除</button>
+                                </td>
                             </tr>`;
                         });
                         
@@ -1496,6 +1800,60 @@
             }
         }
 
+        // 编辑单词（管理员）
+        function editWord(id, word, phonetic, meaning, stage, level) {
+            document.getElementById('edit-word-id').value = id;
+            document.getElementById('edit-word').value = word;
+            document.getElementById('edit-phonetic').value = phonetic;
+            document.getElementById('edit-meaning').value = meaning;
+            document.getElementById('edit-stage').value = stage;
+            document.getElementById('edit-level').value = level;
+            
+            // 显示模态框
+            const modal = new bootstrap.Modal(document.getElementById('edit-word-modal'));
+            modal.show();
+        }
+
+        // 保存编辑（管理员）
+        document.getElementById('save-edit-btn').addEventListener('click', async function() {
+            const id = document.getElementById('edit-word-id').value;
+            const word = document.getElementById('edit-word').value;
+            const phonetic = document.getElementById('edit-phonetic').value;
+            const meaning = document.getElementById('edit-meaning').value;
+            const stage = document.getElementById('edit-stage').value;
+            const level = document.getElementById('edit-level').value;
+
+            if (!token || currentUser.role !== 'admin') return;
+
+            try {
+                const response = await fetch(`http://localhost:3000/api/words/${id}`, {
+                    method: 'PUT',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ word, meaning, phonetic, stage, level: parseInt(level) })
+                });
+
+                const data = await response.json();
+                if (response.ok) {
+                    alert('单词更新成功');
+                    // 关闭模态框
+                    const modal = bootstrap.Modal.getInstance(document.getElementById('edit-word-modal'));
+                    modal.hide();
+                    // 重新加载单词列表
+                    const currentStage = document.getElementById('word-stage').value;
+                    const currentLevel = document.getElementById('word-level').value;
+                    loadWordList(currentStage, currentLevel);
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('更新单词失败:', error);
+                alert('更新单词失败，请稍后重试');
+            }
+        });
+
         // 删除单词（管理员）
         async function deleteWord(wordId, stage, level) {
             if (!token || currentUser.role !== 'admin') return;
@@ -1503,7 +1861,7 @@
             if (!confirm('确定要删除这个单词吗？')) return;
 
             try {
-                const response = await fetch(`http://192.168.1.115:3000/api/words/${wordId}`, {
+                const response = await fetch(`http://localhost:3000/api/words/${wordId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -1528,7 +1886,7 @@
             if (!token || currentUser.role !== 'admin') return;
 
             try {
-                const response = await fetch('http://192.168.1.115:3000/api/tests', {
+                const response = await fetch('http://localhost:3000/api/tests', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1605,20 +1963,6 @@
 
             // 保存测评记录
             saveTestRecord(correctCount, vocabulary.total, level);
-        }
-
-        // 初始化函数，检查本地存储中的登录状态
-        function init() {
-            loadWordData();
-            initEventListeners();
-            
-            // 检查本地存储中的登录状态
-            token = localStorage.getItem('token');
-            const userStr = localStorage.getItem('user');
-            if (token && userStr) {
-                currentUser = JSON.parse(userStr);
-                console.log('用户已登录:', currentUser);
-            }
         }
 
         // 启动应用

@@ -1,0 +1,77 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+    <meta charset="UTF-8">
+    <title>登录测试</title>
+    <style>
+        body { font-family: Arial, sans-serif; padding: 20px; }
+        .test-result { margin: 10px 0; padding: 10px; border-radius: 5px; }
+        .success { background-color: #d4edda; color: #155724; }
+        .error { background-color: #f8d7da; color: #721c24; }
+        .info { background-color: #d1ecf1; color: #0c5460; }
+    </style>
+</head>
+<body>
+    <h1>登录状态测试</h1>
+    <div id="results"></div>
+    
+    <script>
+        const resultsDiv = document.getElementById('results');
+        
+        function addResult(message, type) {
+            const div = document.createElement('div');
+            div.className = 'test-result ' + type;
+            div.textContent = message;
+            resultsDiv.appendChild(div);
+        }
+        
+        // 测试1: 检查localStorage
+        addResult('=== 测试1: 检查localStorage ===', 'info');
+        const token = localStorage.getItem('token');
+        const user = localStorage.getItem('user');
+        
+        if (token) {
+            addResult('✓ token存在: ' + token.substring(0, 50) + '...', 'success');
+        } else {
+            addResult('✗ token不存在', 'error');
+        }
+        
+        if (user) {
+            addResult('✓ user存在: ' + user, 'success');
+        } else {
+            addResult('✗ user不存在', 'error');
+        }
+        
+        // 测试2: 测试API连接
+        addResult('\n=== 测试2: 测试API连接 ===', 'info');
+        
+        if (token) {
+            fetch('http://localhost:3000/api/tests/history', {
+                headers: {
+                    'Authorization': `Bearer ${token}`
+                }
+            })
+            .then(response => {
+                addResult('API响应状态: ' + response.status, response.ok ? 'success' : 'error');
+                return response.json();
+            })
+            .then(data => {
+                if (data.records) {
+                    addResult('✓ 历史记录数量: ' + data.records.length, 'success');
+                } else {
+                    addResult('✗ API返回: ' + data.message, 'error');
+                }
+            })
+            .catch(error => {
+                addResult('✗ API错误: ' + error.message, 'error');
+            });
+        } else {
+            addResult('跳过测试 - 没有token', 'error');
+        }
+        
+        // 测试3: 清除登录状态
+        addResult('\n=== 操作 ===', 'info');
+        addResult('请先登录网站后，再刷新此页面查看token是否正确保存', 'info');
+    </script>
+</body>
+</html>
