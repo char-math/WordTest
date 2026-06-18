@@ -1,4 +1,4 @@
-<!DOCTYPE html>
+﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿﻿<!DOCTYPE html>
 <html lang="zh-CN">
 <head>
     <meta charset="UTF-8">
@@ -28,6 +28,19 @@
         .btn-primary:hover {
             background-color: #0069d9;
             border-color: #0062cc;
+        }
+        .btn-simple {
+            background: #2c3e50;
+            border: none;
+            color: white;
+            padding: 10px 24px;
+            border-radius: 4px;
+            font-size: 15px;
+            transition: all 0.2s ease;
+        }
+        .btn-simple:hover {
+            background: #34495e;
+            color: white;
         }
         .option-btn {
             width: 100%;
@@ -74,70 +87,273 @@
             font-weight: bold;
             color: #007bff;
         }
+        
+        /* 底部导航栏样式 */
+        .bottom-nav {
+            position: fixed;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            background-color: #fafafa;
+            border-top: 1px solid #e8e8e8;
+            padding: 8px 0 16px 0;
+            z-index: 1000;
+            display: flex;
+            justify-content: space-around;
+            align-items: flex-end;
+        }
+        
+        .bottom-nav-item {
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            width: 80px;
+            padding: 8px 0;
+            color: #999;
+            cursor: pointer;
+            transition: color 0.2s;
+        }
+        
+        .bottom-nav-item.active {
+            color: #666;
+        }
+        
+        .bottom-nav-item-icon {
+            font-size: 20px;
+            margin-bottom: 4px;
+        }
+        
+        .bottom-nav-item-text {
+            font-size: 11px;
+        }
+        
+        .bottom-nav-center {
+            position: absolute;
+            bottom: 8px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 64px;
+            height: 64px;
+            background: #f5f5f5;
+            border: 1px solid #ddd;
+            border-radius: 50%;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            justify-content: center;
+            cursor: pointer;
+            transition: all 0.2s;
+        }
+        
+        .bottom-nav-center:hover {
+            background: #eee;
+        }
+        
+        .bottom-nav-center-icon {
+            font-size: 24px;
+            color: #666;
+        }
+        
+        .bottom-nav-center-text {
+            font-size: 10px;
+            color: #666;
+            margin-top: 2px;
+        }
+        
+        .page-content {
+            padding-bottom: 80px;
+        }
     </style>
 </head>
 <body>
-    <div class="container py-5">
+    <div class="container py-5 page-content">
         <!-- 登录页面 -->
-        <div id="login-page" class="card p-5 text-center d-none">
-            <h1 class="mb-4">用户登录</h1>
-            <form id="login-form" class="mx-auto" style="max-width: 400px;">
-                <div class="mb-3">
-                    <label for="login-username" class="form-label">用户名</label>
-                    <input type="text" class="form-control" id="login-username" required>
+        <div id="login-page" class="card p-5 text-center d-none" style="background: #fafafa; max-width: 360px; margin: 0 auto;">
+            <h1 style="font-size: 1.5rem; font-weight: 300; color: #333; margin-bottom: 24px;">登录</h1>
+            <form id="login-form" style="width: 100%;">
+                <div class="mb-4">
+                    <label for="login-username" class="form-label" style="font-size: 0.85rem; color: #666; text-align: left; display: block;">用户名</label>
+                    <input type="text" class="form-control" id="login-username" required style="border: 1px solid #ddd; border-radius: 8px; padding: 12px;">
                 </div>
-                <div class="mb-3">
-                    <label for="login-password" class="form-label">密码</label>
-                    <input type="password" class="form-control" id="login-password" required>
+                <div class="mb-4">
+                    <label for="login-password" class="form-label" style="font-size: 0.85rem; color: #666; text-align: left; display: block;">密码</label>
+                    <input type="password" class="form-control" id="login-password" required style="border: 1px solid #ddd; border-radius: 8px; padding: 12px;">
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg w-100">登录</button>
-                <p class="mt-3">还没有账号？ <a href="#" id="to-register">立即注册</a></p>
-                <p class="mt-2"><a href="#" id="back-to-start">返回首页</a></p>
+                <button type="submit" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: white; color: #666; cursor: pointer; font-size: 0.9rem;">登录</button>
+                <p class="mt-4" style="font-size: 0.85rem; color: #888;">还没有账号？ <a href="#" id="to-register" style="color: #666;">立即注册</a></p>
+                <p class="mt-2" style="font-size: 0.85rem; color: #888;"><a href="#" id="back-to-start" style="color: #666;">返回首页</a></p>
             </form>
         </div>
 
         <!-- 注册页面 -->
-        <div id="register-page" class="card p-5 text-center d-none">
-            <h1 class="mb-4">用户注册</h1>
-            <form id="register-form" class="mx-auto" style="max-width: 400px;">
-                <div class="mb-3">
-                    <label for="register-username" class="form-label">用户名</label>
-                    <input type="text" class="form-control" id="register-username" required>
+        <div id="register-page" class="card p-5 text-center d-none" style="background: #fafafa; max-width: 360px; margin: 0 auto;">
+            <h1 style="font-size: 1.5rem; font-weight: 300; color: #333; margin-bottom: 24px;">注册</h1>
+            <form id="register-form" style="width: 100%;">
+                <div class="mb-4">
+                    <label for="register-username" class="form-label" style="font-size: 0.85rem; color: #666; text-align: left; display: block;">用户名</label>
+                    <input type="text" class="form-control" id="register-username" required style="border: 1px solid #ddd; border-radius: 8px; padding: 12px;">
                 </div>
-                <div class="mb-3">
-                    <label for="register-password" class="form-label">密码</label>
-                    <input type="password" class="form-control" id="register-password" required>
+                <div class="mb-4">
+                    <label for="register-password" class="form-label" style="font-size: 0.85rem; color: #666; text-align: left; display: block;">密码</label>
+                    <input type="password" class="form-control" id="register-password" required style="border: 1px solid #ddd; border-radius: 8px; padding: 12px;">
                 </div>
-                <button type="submit" class="btn btn-primary btn-lg w-100">注册</button>
+                <button type="submit" style="width: 100%; padding: 12px; border: 1px solid #ddd; border-radius: 8px; background: white; color: #666; cursor: pointer; font-size: 0.9rem;">注册</button>
                 <p class="mt-3">已有账号？ <a href="#" id="to-login">立即登录</a></p>
                 <p class="mt-2"><a href="#" id="back-to-start2">返回首页</a></p>
             </form>
         </div>
 
         <!-- 开始页面 -->
-        <div id="start-page" class="card p-5 text-center">
-            <h1 class="mb-4">词汇量测评工具</h1>
-            <p class="mb-5">通过回答50个单词的释义，评估你的词汇水平和词汇量</p>
-            <div class="mb-4 text-left">
-                <h5>测评规则：</h5>
-                <ul class="list-unstyled">
-                    <li class="mb-2">• 共50题，涵盖小学、初中、高中各难度级别</li>
-                    <li class="mb-2">• 每题6个选项（1个正确 + 4个干扰 + "不认识"）</li>
-                    <li class="mb-2">• 结束条件：完成50题 或 连续答错4题 或 累计答错7题</li>
+        <div id="start-page" class="card p-5" style="background: #fafafa;">
+            <h1 class="mb-3" style="font-size: 1.5rem; font-weight: 300; color: #333;">词汇量测评</h1>
+            <p class="mb-4" style="font-size: 0.875rem; color: #888;">通过回答单词释义，评估你的词汇水平</p>
+            
+            <div class="mb-6">
+                <h5 class="mb-3" style="font-size: 0.9rem; font-weight: 400; color: #666;">测评规则</h5>
+                <ul id="start-page-info" class="list-unstyled space-y-2">
+                    <li style="color: #666; font-size: 0.85rem;">• 共50题，涵盖小学、初中、高中各难度级别</li>
+                    <li style="color: #666; font-size: 0.85rem;">• 每题6个选项（1个正确 + 4个干扰 + "不认识"）</li>
+                    <li style="color: #666; font-size: 0.85rem;">• 结束条件：完成50题 或 连续答错4题 或 累计答错7题</li>
                 </ul>
             </div>
-            <div class="d-flex flex-column gap-3 align-items-center">
-                <div class="d-flex gap-3">
-                    <button id="login-btn" class="btn btn-secondary btn-lg">登录/注册</button>
-                    <button id="start-test" class="btn btn-primary btn-lg">开始测评</button>
-                </div>
-                <button id="start-pk" class="btn btn-danger btn-lg">AI单词PK</button>
+            
+            <!-- 欢迎信息 -->
+            <div id="welcome-message" class="mb-6 d-none">
+                <p style="color: #666; font-weight: 500;">欢迎回来，<span id="welcome-username"></span></p>
+                <p style="color: #999; font-size: 0.8rem;">进入个人中心查看历史记录和错题本</p>
+            </div>
+            
+            <!-- 开始测评按钮 -->
+            <div class="text-center mt-8">
+                <button id="start-test" style="width: 120px; height: 120px; border-radius: 50%; background: #f5f5f5; border: 1px solid #ddd; color: #666; font-size: 0.9rem; font-weight: 500; cursor: pointer; transition: all 0.2s;">
+                    <span style="font-size: 28px; display: block; margin-bottom: 4px;">开始</span>
+                    <span style="font-size: 0.75rem;">测评</span>
+                </button>
             </div>
         </div>
 
+        <!-- 用户PK页面 -->
+        <div id="user-pk-page" class="card p-5 d-none" style="background: #fafafa;">
+            <div style="background: linear-gradient(135deg, #f5f5f5, #e8e8e8); border-radius: 12px; padding: 24px; margin-bottom: 20px; text-align: center;">
+                <h2 style="font-size: 1.5rem; font-weight: 300; color: #333; margin-bottom: 4px;">用户匹配</h2>
+                <p style="font-size: 0.875rem; color: #888;">与其他用户进行实时PK</p>
+            </div>
+            
+            <!-- PK房间列表 -->
+            <div id="user-pk-rooms" class="mb-5">
+                <div class="d-flex justify-content-between align-items-center mb-3">
+                    <h5 style="font-weight: 400; color: #666;">房间列表</h5>
+                    <div class="d-flex gap-2">
+                        <button id="create-room-btn" style="padding: 6px 16px; border: 1px solid #ddd; border-radius: 6px; background: white; color: #666; cursor: pointer; font-size: 0.875rem;">创建房间</button>
+                        <button id="user-pk-back-home-btn" style="padding: 6px 16px; border: 1px solid #ccc; border-radius: 6px; background: transparent; color: #666; cursor: pointer; font-size: 0.875rem;">返回首页</button>
+                    </div>
+                </div>
+                <div id="pk-rooms-list" class="p-3 border rounded" style="max-height: 300px; overflow-y: auto; background: white;">
+                    <!-- 房间列表将在这里显示 -->
+                </div>
+            </div>
+            
+            <!-- PK进行中 -->
+            <div id="user-pk-arena" class="d-none">
+                <div class="row mb-5">
+                    <div class="col-md-6 text-center">
+                        <h3>你</h3>
+                        <div class="p-3 border rounded mb-3">
+                            <p class="display-4" id="user-pk-score1">0</p>
+                        </div>
+                        <div id="user-pk-result1" class="mt-2"></div>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <h3 id="opponent-name">对手</h3>
+                        <div class="p-3 border rounded mb-3">
+                            <p class="display-4" id="user-pk-score2">0</p>
+                        </div>
+                        <div id="user-pk-result2" class="mt-2"></div>
+                    </div>
+                </div>
+                <div class="mb-5">
+                    <div class="text-center mb-2">
+                        <span class="badge bg-danger text-white" id="user-pk-timer">时间：10秒</span>
+                    </div>
+                    <h2 class="text-center mb-3" id="user-pk-word"></h2>
+                    <p class="text-center mb-4" id="user-pk-phonetic"></p>
+                    <div class="options" id="user-pk-options"></div>
+                </div>
+                <div class="text-center">
+                    <button id="user-pk-next-btn" class="btn btn-simple d-none">下一题</button>
+                    <button id="user-pk-finish-btn" class="btn btn-simple d-none">查看结果</button>
+                    <button id="user-pk-back-btn" class="btn btn-simple">返回首页</button>
+                </div>
+            </div>
+            
+            <!-- PK结果 -->
+            <div id="user-pk-result" class="d-none">
+                <h2 class="text-center mb-4">PK结果</h2>
+                <div class="row mb-5">
+                    <div class="col-md-6 text-center">
+                        <h3>你</h3>
+                        <p class="display-4" id="final-score1">0</p>
+                    </div>
+                    <div class="col-md-6 text-center">
+                        <h3 id="final-opponent-name">对手</h3>
+                        <p class="display-4" id="final-score2">0</p>
+                    </div>
+                </div>
+                <div class="text-center">
+                    <p id="pk-winner" class="text-lg font-bold mb-4"></p>
+                    <button id="user-pk-restart-btn" class="btn btn-simple">再来一局</button>
+                    <button id="user-pk-back-home" class="btn btn-simple">返回首页</button>
+                </div>
+            </div>
+        </div>
+        
+        <!-- PK选择页面 -->
+        <div id="pk-select-page" class="card p-5 d-none" style="max-width: 360px; margin: 0 auto; background: #fafafa;">
+            <div style="background: linear-gradient(135deg, #f5f5f5, #e8e8e8); border-radius: 12px; padding: 24px; margin-bottom: 24px; text-align: center;">
+                <h2 style="font-size: 1.5rem; font-weight: 300; color: #333; margin-bottom: 4px;">PK对战</h2>
+                <p style="font-size: 0.875rem; color: #888;">选择对战模式</p>
+            </div>
+            
+            <div style="display: flex; flex-direction: column; gap: 16px; margin-bottom: 24px;">
+                <button onclick="startAiPk()" style="width: 100%; padding: 18px; border: 1px solid #ddd; border-radius: 8px; background: white; cursor: pointer; transition: all 0.2s; text-align: left;">
+                    <div style="font-weight: 500; color: #333; font-size: 1rem; margin-bottom: 4px;">AI对战</div>
+                    <div style="font-size: 0.75rem; color: #999;">与不同难度的AI进行对战</div>
+                </button>
+                
+                <button onclick="startUserPk()" style="width: 100%; padding: 18px; border: 1px solid #ddd; border-radius: 8px; background: white; cursor: pointer; transition: all 0.2s; text-align: left;">
+                    <div style="font-weight: 500; color: #333; font-size: 1rem; margin-bottom: 4px;">用户匹配</div>
+                    <div style="font-size: 0.75rem; color: #999;">与其他用户进行实时PK</div>
+                </button>
+            </div>
+            
+            <div class="text-center">
+                <button id="pk-select-back-btn" onclick="goToStartPage()" style="padding: 10px 32px; border: 1px solid #ccc; border-radius: 6px; background: transparent; color: #666; cursor: pointer; font-size: 0.875rem; transition: all 0.2s;">返回首页</button>
+            </div>
+        </div>
+        
         <!-- AI单词PK页面 -->
-        <div id="pk-page" class="card p-5 d-none">
-            <h1 class="mb-4 text-center">AI单词PK</h1>
+        <div id="pk-page" class="card p-5 d-none" style="background: #fafafa;">
+            <div style="background: linear-gradient(135deg, #f5f5f5, #e8e8e8); border-radius: 12px; padding: 24px; margin-bottom: 20px; text-align: center;">
+                <h2 style="font-size: 1.5rem; font-weight: 300; color: #333; margin-bottom: 4px;">AI对战</h2>
+                <p style="font-size: 0.875rem; color: #888;">与不同难度的AI进行对决</p>
+            </div>
+            
+            <!-- 统计数据 -->
+            <div class="row mb-4">
+                <div class="col-md-4 text-center">
+                    <div style="font-size: 1.5rem; font-weight: 500; color: #666;">胜场</div>
+                    <div style="font-size: 1.2rem; font-weight: 500; color: #333;">0</div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div style="font-size: 1.5rem; font-weight: 500; color: #666;">胜率</div>
+                    <div style="font-size: 1.2rem; font-weight: 500; color: #333;">0%</div>
+                </div>
+                <div class="col-md-4 text-center">
+                    <div style="font-size: 1.5rem; font-weight: 500; color: #666;">等级</div>
+                    <div style="font-size: 1.2rem; font-weight: 500; color: #333;">Lv.1</div>
+                </div>
+            </div>
             <div class="row mb-5">
                 <div class="col-md-6 text-center">
                     <h3>你</h3>
@@ -147,7 +363,7 @@
                     <div id="user-result" class="mt-2"></div>
                 </div>
                 <div class="col-md-6 text-center">
-                    <h3>AI</h3>
+                    <h3 id="ai-name">AI</h3>
                     <div class="p-3 border rounded mb-3">
                         <p class="display-4" id="ai-score">0</p>
                     </div>
@@ -163,9 +379,8 @@
                 <div class="options" id="pk-options"></div>
             </div>
             <div class="text-center">
-                <button id="pk-next-btn" class="btn btn-primary btn-lg d-none">下一题</button>
-                <button id="pk-restart-btn" class="btn btn-secondary btn-lg d-none">重新PK</button>
-                <button id="pk-back-btn" class="btn btn-outline-primary btn-lg">返回首页</button>
+                <button id="pk-restart-btn" class="btn btn-simple d-none">重新PK</button>
+                <button id="pk-back-btn" class="btn btn-simple">返回首页</button>
             </div>
         </div>
 
@@ -181,7 +396,7 @@
             </div>
             <div class="options" id="options"></div>
             <div class="mt-5">
-                <button id="next-btn" class="btn btn-primary btn-lg d-none">下一题</button>
+                <button id="next-btn" class="btn btn-simple d-none">下一题</button>
             </div>
         </div>
 
@@ -220,58 +435,130 @@
                 </div>
             </div>
             <div class="text-center">
-                <button id="restart-test" class="btn btn-primary btn-lg">重新测评</button>
-                <button id="to-profile" class="btn btn-secondary btn-lg mt-3">查看历史记录</button>
+                <button id="restart-test" class="btn btn-simple">重新测评</button>
+                <button id="to-profile" class="btn btn-simple mt-3">查看历史记录</button>
             </div>
         </div>
 
         <!-- 个人中心页面 -->
-        <div id="profile-page" class="card p-5 d-none">
-            <h1 class="mb-4 text-center">个人中心</h1>
-            <div class="mb-4">
-                <h4>用户信息</h4>
-                <div id="user-info" class="p-3 border rounded">
-                    <!-- 用户信息将在这里显示 -->
-                </div>
-            </div>
-            <div class="mb-4">
-                <ul class="nav nav-tabs">
-                    <li class="nav-item">
-                        <a class="nav-link active" data-target="profile-records" id="tab-records">历史记录</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-target="profile-chart" id="tab-chart">水平变化</a>
-                    </li>
-                    <li class="nav-item">
-                        <a class="nav-link" data-target="profile-wrong" id="tab-wrong">错题本</a>
-                    </li>
-                </ul>
-                <div id="profile-records" class="mt-3">
-                    <h5>历史测评记录</h5>
-                    <div id="test-records" class="p-3 border rounded">
-                        <!-- 历史测评记录将在这里显示 -->
+        <div id="profile-page" class="card p-0 d-none overflow-hidden" style="background: #fafafa;">
+            <!-- 顶部背景区域 -->
+            <div style="background: linear-gradient(135deg, #f5f5f5, #e8e8e8); padding: 40px 30px 60px 30px; color: #333;">
+                <div class="d-flex align-items-center">
+                    <div style="width: 80px; height: 80px; border-radius: 50%; background: #ddd; display: flex; align-items: center; justify-content: center; font-size: 36px; margin-right: 20px;"></div>
+                    <div>
+                        <h2 id="profile-username" style="font-size: 1.4rem; font-weight: 300; margin-bottom: 4px;">用户</h2>
+                        <p style="font-size: 0.85rem; color: #888;">坚持学习第 0 天</p>
                     </div>
                 </div>
-                <div id="profile-chart" class="mt-3 d-none">
-                    <h5>词汇量变化趋势</h5>
-                    <div id="vocabulary-chart-container" class="p-3 border rounded">
-                        <canvas id="vocabulary-chart"></canvas>
+                
+                <!-- 统计数据 -->
+                <div class="row mt-6">
+                    <div class="col-4 text-center">
+                        <div id="stat-tests" style="font-size: 1.5rem; font-weight: 500; color: #333;">0</div>
+                        <div style="font-size: 0.75rem; color: #888;">测评次数</div>
                     </div>
-                </div>
-                <div id="profile-wrong" class="mt-3 d-none">
-                    <h5>错题本 <span id="wrong-count" class="badge bg-danger">0</span></h5>
-                    <div id="wrong-words-list" class="p-3 border rounded" style="max-height: 400px; overflow-y: auto;">
-                        <!-- 错题列表将在这里显示 -->
+                    <div class="col-4 text-center">
+                        <div id="stat-vocabulary" style="font-size: 1.5rem; font-weight: 500; color: #333;">0</div>
+                        <div style="font-size: 0.75rem; color: #888;">最高词汇量</div>
                     </div>
-                    <div class="mt-3">
-                        <button id="clear-wrong-btn" class="btn btn-outline-danger">清空错题本</button>
+                    <div class="col-4 text-center">
+                        <div id="stat-accuracy" style="font-size: 1.5rem; font-weight: 500; color: #333;">0%</div>
+                        <div style="font-size: 0.75rem; color: #888;">平均正确率</div>
                     </div>
                 </div>
             </div>
-            <div class="text-center mt-4">
-                <button id="back-from-profile" class="btn btn-primary btn-lg">返回首页</button>
-                <button id="logout-btn" class="btn btn-secondary btn-lg mt-3">退出登录</button>
-                <button id="to-admin" class="btn btn-danger btn-lg mt-3" style="display: none;">管理员后台</button>
+            
+            <!-- 内容区域 -->
+            <div style="padding: 20px 30px; background: #fafafa;">
+                <!-- 等级信息 -->
+                <div style="background: #f0f0f0; border-radius: 12px; padding: 20px; margin-bottom: 20px; color: #333;">
+                    <div class="d-flex justify-content-between align-items-center mb-2">
+                        <span style="font-weight: 400;">词汇达人 Lv.1</span>
+                        <span style="font-size: 0.8rem; color: #888;">再获得 0 经验值升级</span>
+                    </div>
+                    <div style="height: 6px; background: #ddd; border-radius: 3px; overflow: hidden;">
+                        <div style="height: 100%; background: #bbb; width: 0%; border-radius: 3px;"></div>
+                    </div>
+                </div>
+                
+                <!-- 个人功能菜单 -->
+                <div class="space-y-1 mb-4">
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="showProfileTab('wrong')">
+                        <span style="font-weight: 400; color: #666;">我的错题本</span>
+                        <span style="color: #bbb;">›</span>
+                    </div>
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="showProfileTab('records')">
+                        <span style="font-weight: 400; color: #666;">测评历史记录</span>
+                        <span style="color: #bbb;">›</span>
+                    </div>
+                    <div style="background: white; border: 1px solid #eee; border-radius: 8px; padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; cursor: pointer;" onclick="showProfileTab('chart')">
+                        <span style="font-weight: 400; color: #666;">水平变化</span>
+                        <span style="color: #bbb;">›</span>
+                    </div>
+                </div>
+                
+                <!-- 内容区域 -->
+                <div id="profile-content">
+                    <div id="profile-records">
+                        <h5 style="font-weight: 600; margin-bottom: 16px;">历史测评记录</h5>
+                        <div id="test-records" style="background: #f8f9fa; border-radius: 12px; padding: 16px;">
+                            <!-- 历史测评记录将在这里显示 -->
+                        </div>
+                    </div>
+                    <div id="profile-chart" class="d-none">
+                        <h5 style="font-weight: 600; margin-bottom: 16px;">词汇量变化趋势</h5>
+                        <div id="vocabulary-chart-container" style="background: #f8f9fa; border-radius: 12px; padding: 16px;">
+                            <canvas id="vocabulary-chart"></canvas>
+                        </div>
+                    </div>
+                    <div id="profile-wrong" class="d-none">
+                        <h5 style="font-weight: 600; margin-bottom: 16px;">错题本 <span id="wrong-count" style="background: #e8e8e8; color: #666; padding: 2px 8px; border-radius: 10px; font-size: 0.75rem;">0</span></h5>
+                        <div id="wrong-words-list" style="background: #f8f9fa; border-radius: 12px; padding: 16px; max-height: 300px; overflow-y: auto;">
+                            <!-- 错题列表将在这里显示 -->
+                        </div>
+                        <div class="mt-3">
+                            <button id="review-wrong-btn" style="background: white; color: #666; border: 1px solid #ddd; border-radius: 8px; padding: 10px 20px; font-weight: 500;">复习错题</button>
+                            <button id="clear-wrong-btn" style="background: #f8f9fa; color: #666; border: none; border-radius: 8px; padding: 10px 20px; font-weight: 500; margin-left: 10px;">清空错题本</button>
+                        </div>
+                    
+                    <!-- 复习模式区域 -->
+                    <div id="review-mode" class="mt-4 d-none">
+                        <h5>复习模式 - 填空补全</h5>
+                        <div class="p-4 border rounded bg-light">
+                            <div class="mb-3">
+                                <span class="text-muted">第 <span id="review-current">1</span> / <span id="review-total">0</span> 题</span>
+                                <span id="review-score" class="ml-3 badge bg-success">得分: 0</span>
+                            </div>
+                            <div class="mb-3">
+                                <p class="text-muted">请根据释义写出单词：</p>
+                                <h4 id="review-meaning" class="text-lg font-bold text-primary mb-2"></h4>
+                            </div>
+                            <div class="mb-3">
+                                <p class="text-muted">补全单词：</p>
+                                <div id="review-blank" class="text-2xl font-bold text-center mb-2 p-3 border rounded bg-white"></div>
+                            </div>
+                            <div class="mb-3">
+                                <input type="text" id="review-input" class="form-control" placeholder="输入单词..." maxlength="20">
+                                <div id="review-hint" class="text-sm text-muted mt-2 d-none"></div>
+                            </div>
+                            <div id="review-result" class="mb-3 text-center font-bold"></div>
+                            <div class="mt-4">
+                                <button id="review-submit" class="btn btn-primary">提交答案</button>
+                                <button id="review-show-answer" class="btn btn-outline-secondary ml-2">显示答案</button>
+                                <button id="review-finish" class="btn btn-simple d-none">完成复习</button>
+                            </div>
+                            <div id="review-result" class="mt-3 d-none">
+                                <p id="review-message"></p>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="d-flex gap-3 mt-4">
+                <button id="back-from-profile" class="btn btn-simple">返回首页</button>
+                <button id="logout-btn" class="btn btn-simple">退出登录</button>
+                <button id="to-admin" class="btn btn-simple" style="display: none;">管理员后台</button>
             </div>
         </div>
 
@@ -411,7 +698,7 @@
                 </div>
             </div>
             <div class="text-center">
-                <button id="back-from-admin" class="btn btn-primary btn-lg">返回个人中心</button>
+                <button id="back-from-admin" class="btn btn-simple">返回个人中心</button>
             </div>
         </div>
     </div>
@@ -430,6 +717,7 @@
         let currentUser = null;
         let token = null;
         let wrongWords = []; // 存储错题
+        let testHistoryData = []; // 存储历史测评记录用于图表
         
         // PK相关变量
         let pkQuestions = [];
@@ -440,6 +728,68 @@
         let timeLimit = 10; // 每题时间限制（秒）
         let timerInterval = null;
         let remainingTime = timeLimit;
+        
+        // 开始AI PK
+        function startAiPk() {
+            const difficulty = prompt('请选择AI难度：\n1. 小学AI（简单）\n2. 初中AI（中等）\n3. 高中AI（困难）', '2');
+            
+            if (!difficulty) return;
+            
+            switch(difficulty) {
+                case '1':
+                    currentAiDifficulty = 'easy';
+                    break;
+                case '2':
+                    currentAiDifficulty = 'medium';
+                    break;
+                case '3':
+                    currentAiDifficulty = 'hard';
+                    break;
+                default:
+                    currentAiDifficulty = 'medium';
+            }
+            
+            generatePkQuestions();
+            currentPkQuestionIndex = 0;
+            userScore = 0;
+            aiScore = 0;
+            
+            document.getElementById('user-score').textContent = userScore;
+            document.getElementById('ai-score').textContent = aiScore;
+            document.getElementById('ai-name').textContent = getAiName();
+            
+            showPage('pk-page');
+            showCurrentPkQuestion();
+        }
+        
+        // 开始用户匹配PK
+        function startUserPk() {
+            showPage('user-pk-page');
+            loadPKRooms();
+        }
+        
+        // 返回首页
+        function goToStartPage() {
+            showPage('start-page');
+            updateBottomNav('nav-test');
+        }
+        
+        // 暴露到全局作用域，供HTML onclick使用
+        window.startAiPk = startAiPk;
+        window.startUserPk = startUserPk;
+        window.goToStartPage = goToStartPage;
+        
+        // 用户PK相关变量
+        let userPkQuestions = [];
+        let currentUserPkQuestionIndex = 0;
+        let userPkScore1 = 0;
+        let userPkScore2 = 0;
+        let userPkOpponent = null;
+        let userPkTimerInterval = null;
+        let userPkRemainingTime = timeLimit;
+        let currentRoom = null;
+        let pkRooms = [];
+        let roomRefreshInterval = null;
 
         // 页面加载时恢复登录状态
         function restoreLoginState() {
@@ -464,13 +814,45 @@
                 if (toAdminBtn) {
                     if (currentUser.role === 'admin') {
                         toAdminBtn.style.display = 'inline-block';
+                        console.log('用户是管理员，显示管理员后台按钮');
                     } else {
                         toAdminBtn.style.display = 'none';
+                        console.log('用户不是管理员，隐藏管理员后台按钮');
                     }
                 }
                 
-                console.log('已恢复登录状态:', currentUser.username);
+                console.log('已恢复登录状态:', currentUser.username, '角色:', currentUser.role);
+                updateStartPageInfo();
+                // 更新按钮显示
+                const loginBtn = document.getElementById('login-btn');
+                const profileBtn = document.getElementById('profile-btn');
+                if (loginBtn) loginBtn.classList.add('d-none');
+                if (profileBtn) profileBtn.classList.remove('d-none');
             }
+        }
+        
+        // 更新首页提示信息
+        function updateStartPageInfo() {
+            const infoList = document.getElementById('start-page-info');
+            if (!infoList) return;
+            
+            infoList.innerHTML = `
+                <li class="mb-2">• 欢迎回来，${currentUser.username}！</li>
+                <li class="mb-2">• 进入个人中心查看历史记录和错题本</li>
+                <li class="mb-2">• 完成测评提升你的词汇量水平</li>
+            `;
+        }
+        
+        // 恢复首页原始提示信息
+        function resetStartPageInfo() {
+            const infoList = document.getElementById('start-page-info');
+            if (!infoList) return;
+            
+            infoList.innerHTML = `
+                <li class="mb-2">• 共50题，涵盖小学、初中、高中各难度级别</li>
+                <li class="mb-2">• 每题6个选项（1个正确 + 4个干扰 + "不认识"）</li>
+                <li class="mb-2">• 结束条件：完成50题 或 连续答错4题 或 累计答错7题</li>
+            `;
         }
 
         // 单词分布配置
@@ -496,6 +878,9 @@
 
         // 页面切换函数
         function showPage(pageId) {
+            console.log('showPage called with:', pageId);
+            const targetPage = document.getElementById(pageId);
+            console.log('目标页面元素:', targetPage);
             // 隐藏所有页面
             document.querySelectorAll('.card').forEach(card => {
                 card.classList.add('d-none');
@@ -558,11 +943,17 @@
 
         // 处理时间到的情况
         function handleTimeUp() {
+            // 如果已经抢答了，不处理
+            if (questionAnswered) return;
+            
+            // 标记为已抢答（AI抢到）
+            questionAnswered = true;
+            
             // 标记用户未答题
             const userResult = document.getElementById('user-result');
-            userResult.innerHTML = '<span class="text-danger">✗ 时间到！</span>';
+            userResult.innerHTML = '<span class="text-danger">✗ 未抢到！</span>';
             
-            // AI答题
+            // AI抢答
             const question = pkQuestions[currentPkQuestionIndex];
             const aiCorrect = aiAnswer(question);
             if (aiCorrect) aiScore++;
@@ -573,7 +964,7 @@
             // 显示AI结果
             const aiResult = document.getElementById('ai-result');
             aiResult.innerHTML = aiCorrect ? 
-                '<span class="text-success">✓ AI答对了</span>' : 
+                '<span class="text-success">✓ AI抢答成功！</span>' : 
                 '<span class="text-danger">✗ AI答错了</span>';
             
             // 标记正确选项
@@ -584,8 +975,10 @@
                 btn.disabled = true;
             });
             
-            // 显示下一题按钮
-            document.getElementById('pk-next-btn').classList.remove('d-none');
+            // 延迟1.5秒后自动进入下一题
+            setTimeout(() => {
+                goToNextPkQuestion();
+            }, 1500);
         }
 
         // 显示当前PK题目
@@ -604,8 +997,8 @@
             const distractors = generateDistractors(correctMeaning, question.level);
             const options = [correctMeaning, ...distractors, '不认识'];
             
-            // 打乱选项顺序
-            for (let i = options.length - 1; i > 0; i--) {
+            // 打乱选项顺序（但不认识固定在最后）
+            for (let i = options.length - 2; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [options[i], options[j]] = [options[j], options[i]];
             }
@@ -635,8 +1028,8 @@
                     // 添加当前选项的选中状态
                     this.classList.add('selected');
                     
-                    // 显示下一题按钮
-                    document.getElementById('pk-next-btn').classList.remove('d-none');
+                    // 直接检查答案并自动进入下一题
+                    checkPkAnswer();
                 });
                 
                 optionsContainer.appendChild(button);
@@ -650,39 +1043,59 @@
             startTimer();
         }
 
+        // AI难度配置
+        const aiDifficulties = {
+            easy: { name: '小学AI', correctRates: { primary: 0.9, middle: 0.5, high: 0.2 }, delay: 3000 },
+            medium: { name: '初中AI', correctRates: { primary: 0.95, middle: 0.8, high: 0.5 }, delay: 2000 },
+            hard: { name: '高中AI', correctRates: { primary: 1.0, middle: 0.95, high: 0.8 }, delay: 1500 }
+        };
+        
+        let currentAiDifficulty = 'medium';
+        
         // AI答题逻辑
         function aiAnswer(question) {
-            // AI答题正确率：根据单词难度调整
-            let correctRate = 0.8; // 基础正确率
-            
-            // 难度越高，AI正确率越低
-            if (question.level === 'high') {
-                correctRate = 0.6;
-            } else if (question.level === 'middle') {
-                correctRate = 0.7;
-            }
-            
-            // 随机决定AI是否答对
+            const difficulty = aiDifficulties[currentAiDifficulty];
+            const correctRate = difficulty.correctRates[question.level] || 0.5;
             return Math.random() < correctRate;
         }
+        
+        // 获取AI延迟时间
+        function getAiDelay() {
+            return aiDifficulties[currentAiDifficulty].delay;
+        }
+        
+        // 获取当前AI名称
+        function getAiName() {
+            return aiDifficulties[currentAiDifficulty].name;
+        }
 
-        // 检查PK答案
+        let aiAnswerTimeout = null; // AI答题定时器
+        let questionAnswered = false; // 当前题是否已被抢答
+        
+        // 检查PK答案（抢答机制）
         function checkPkAnswer() {
+            // 如果已经有人抢答了，不处理
+            if (questionAnswered) return false;
+            
             const selectedButton = document.querySelector('.option-btn.selected');
             if (!selectedButton) return false;
             
-            // 清除定时器
+            // 标记为已抢答
+            questionAnswered = true;
+            
+            // 清除定时器和AI答题定时器
             if (timerInterval) {
                 clearInterval(timerInterval);
+            }
+            if (aiAnswerTimeout) {
+                clearTimeout(aiAnswerTimeout);
             }
             
             const question = pkQuestions[currentPkQuestionIndex];
             const userCorrect = selectedButton.dataset.correct === 'true';
-            const aiCorrect = aiAnswer(question);
             
-            // 更新分数
+            // 更新分数（抢答成功）
             if (userCorrect) userScore++;
-            if (aiCorrect) aiScore++;
             
             // 更新分数显示
             document.getElementById('user-score').textContent = userScore;
@@ -692,13 +1105,16 @@
             const userResult = document.getElementById('user-result');
             const aiResult = document.getElementById('ai-result');
             
-            userResult.innerHTML = userCorrect ? 
-                '<span class="text-success">✓ 答对了！</span>' : 
-                '<span class="text-danger">✗ 答错了</span>';
-            
-            aiResult.innerHTML = aiCorrect ? 
-                '<span class="text-success">✓ AI答对了</span>' : 
-                '<span class="text-danger">✗ AI答错了</span>';
+            if (userCorrect) {
+                userResult.innerHTML = '<span class="text-success">✓ 抢答成功！</span>';
+                aiResult.innerHTML = '<span class="text-muted">AI未抢到</span>';
+            } else {
+                userResult.innerHTML = '<span class="text-danger">✗ 答错了</span>';
+                // 用户答错，AI仍然有机会答题
+                aiResult.innerHTML = '<span class="text-success">✓ AI答对了</span>';
+                aiScore++;
+                document.getElementById('ai-score').textContent = aiScore;
+            }
             
             // 标记选项
             document.querySelectorAll('.option-btn').forEach(btn => {
@@ -710,7 +1126,25 @@
                 btn.disabled = true;
             });
             
+            // 延迟1.5秒后自动进入下一题
+            setTimeout(() => {
+                goToNextPkQuestion();
+            }, 1500);
+            
             return true;
+        }
+        
+        // 进入下一题
+        function goToNextPkQuestion() {
+            // 重置抢答状态
+            questionAnswered = false;
+            currentPkQuestionIndex++;
+            
+            if (currentPkQuestionIndex >= pkQuestions.length) {
+                showPkResult();
+            } else {
+                showCurrentPkQuestion();
+            }
         }
 
         // 显示PK结果
@@ -739,7 +1173,623 @@
             document.getElementById('pk-next-btn').classList.add('d-none');
             document.getElementById('pk-restart-btn').classList.remove('d-none');
         }
-
+        
+        // 加载PK房间列表
+        async function loadPKRooms() {
+            const roomsList = document.getElementById('pk-rooms-list');
+            roomsList.innerHTML = '<p class="text-muted">正在加载房间...</p>';
+            
+            try {
+                const response = await fetch('/api/pk/rooms', {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                if (!response.ok) {
+                    const errorData = await response.json();
+                    console.error('加载房间列表失败:', errorData.message);
+                    roomsList.innerHTML = `<p class="text-danger">加载房间列表失败: ${errorData.message || '网络错误'}</p>`;
+                    return;
+                }
+                
+                const data = await response.json();
+                pkRooms = data.rooms || [];
+                
+                if (pkRooms.length === 0) {
+                    roomsList.innerHTML = '<p class="text-muted">暂无可用房间，请创建一个</p>';
+                    return;
+                }
+                
+                let html = '<table class="table table-sm"><thead><tr><th>房间名称</th><th>房主</th><th>人数</th><th>状态</th><th>操作</th></tr></thead><tbody>';
+                pkRooms.forEach(room => {
+                    const statusText = room.status === 'waiting' ? '等待中' : '准备就绪';
+                    const statusClass = room.status === 'waiting' ? 'text-success' : 'text-primary';
+                    const canJoin = room.players < room.maxPlayers && room.status === 'waiting';
+                    const isInRoom = room.playersIds && room.playersIds.includes(currentUser.id);
+                    
+                    html += `<tr>
+                        <td>${room.name}</td>
+                        <td>${room.host}</td>
+                        <td>${room.players}/${room.maxPlayers}</td>
+                        <td><span class="${statusClass}">${statusText}</span></td>
+                        <td>
+                            ${isInRoom ? `
+                                <button class="btn btn-sm btn-outline-info" onclick="enterRoom(${room.id})">进入</button>
+                            ` : `
+                                <button class="btn btn-sm ${canJoin ? 'btn-outline-primary' : 'btn-secondary'}" 
+                                        onclick="joinPKRoom(${room.id})" 
+                                        ${!canJoin ? 'disabled' : ''}>
+                                    ${canJoin ? '加入' : '已满'}
+                                </button>
+                            `}
+                        </td>
+                    </tr>`;
+                });
+                html += '</tbody></table>';
+                roomsList.innerHTML = html;
+            } catch (error) {
+                console.error('加载房间列表失败:', error);
+                roomsList.innerHTML = '<p class="text-danger">加载房间列表失败: ' + error.message + '</p>';
+            }
+        }
+        
+        // 进入已有房间
+        async function enterRoom(roomId) {
+            try {
+                const response = await fetch(`/api/pk/rooms/${roomId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    currentRoom = data.room;
+                    userPkOpponent = { name: currentRoom.playersList.find(p => p !== currentUser.username), id: currentRoom.id };
+                    showWaitingRoom(currentRoom);
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('进入房间失败:', error);
+                alert('进入房间失败');
+            }
+        }
+        
+        // 创建房间
+        async function createRoom() {
+            const roomName = prompt('请输入房间名称：', `${currentUser.username}的PK房间`);
+            if (!roomName) return;
+            
+            try {
+                const response = await fetch('/api/pk/rooms', {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({ name: roomName })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    currentRoom = data.room;
+                    showWaitingRoom(currentRoom);
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('创建房间失败:', error);
+                alert('创建房间失败');
+            }
+        }
+        
+        // 显示等待房间界面
+        function showWaitingRoom(room) {
+            const roomsList = document.getElementById('pk-rooms-list');
+            roomsList.innerHTML = `
+                <div class="text-center py-4">
+                    <h5>房间 "${room.name}"</h5>
+                    <p class="text-muted mt-2">房主：${room.host}</p>
+                    <p class="text-muted">当前人数：${room.players}/${room.maxPlayers}</p>
+                    <div class="mt-3 p-3 border rounded">
+                        <p>已加入玩家：</p>
+                        <div class="d-flex justify-content-center gap-2 flex-wrap">
+                            ${room.playersList.map(p => `<span class="badge bg-primary">${p}</span>`).join('')}
+                        </div>
+                    </div>
+                    ${room.players >= room.maxPlayers ? `
+                        <button class="btn btn-primary mt-4" onclick="startUserPKGame()">开始PK</button>
+                    ` : `
+                        <p class="text-muted mt-3">等待对手加入...</p>
+                    `}
+                    <button class="btn btn-outline-danger mt-2" onclick="leaveRoom()">离开房间</button>
+                </div>
+            `;
+            
+            // 如果还没满员，开始定时刷新检查
+            if (room.players < room.maxPlayers) {
+                if (roomRefreshInterval) clearInterval(roomRefreshInterval);
+                roomRefreshInterval = setInterval(() => {
+                    refreshRoomStatus(room.id);
+                }, 2000);
+            }
+        }
+        
+        // 刷新房间状态
+        async function refreshRoomStatus(roomId) {
+            try {
+                const response = await fetch(`/api/pk/rooms/${roomId}`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                if (response.ok && data.room) {
+                    const room = data.room;
+                    if (room.players !== currentRoom.players) {
+                        // 房间状态变化了
+                        currentRoom.players = room.players;
+                        currentRoom.playersList = room.playersList;
+                        currentRoom.status = room.status;
+                        userPkOpponent = { name: room.playersList.find(p => p !== currentUser.username), id: room.id };
+                        showWaitingRoom(currentRoom);
+                    }
+                }
+            } catch (error) {
+                console.error('刷新房间状态失败:', error);
+            }
+        }
+        
+        // 加入房间
+        async function joinPKRoom(roomId) {
+            try {
+                const response = await fetch(`/api/pk/rooms/${roomId}/join`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    currentRoom = data.room;
+                    userPkOpponent = { name: currentRoom.playersList.find(p => p !== currentUser.username), id: currentRoom.id };
+                    showWaitingRoom(currentRoom);
+                } else {
+                    alert(data.message);
+                }
+            } catch (error) {
+                console.error('加入房间失败:', error);
+                alert('加入房间失败');
+            }
+        }
+        
+        // 离开房间
+        async function leaveRoom() {
+            if (!currentRoom) {
+                loadPKRooms();
+                return;
+            }
+            
+            try {
+                await fetch(`/api/pk/rooms/${currentRoom.id}/leave`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+            } catch (error) {
+                console.error('离开房间失败:', error);
+            }
+            
+            // 清除定时刷新
+            if (roomRefreshInterval) {
+                clearInterval(roomRefreshInterval);
+                roomRefreshInterval = null;
+            }
+            
+            currentRoom = null;
+            loadPKRooms();
+        }
+        
+        // 开始用户PK游戏
+        async function startUserPKGame() {
+            try {
+                console.log('开始PK游戏，房间ID:', currentRoom.id);
+                
+                // 从后端获取游戏题目和状态
+                const response = await fetch(`/api/pk/rooms/${currentRoom.id}/game`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                console.log('响应状态:', response.status);
+                const data = await response.json();
+                console.log('响应数据:', data);
+                
+                if (response.ok) {
+                    // 使用后端统一生成的题目
+                    userPkQuestions = data.questions;
+                    userPkScores = data.scores;
+                    currentUserPkQuestionIndex = data.currentQuestionIndex;
+                    
+                    // 获取对手信息
+                    const opponentId = data.playersIds.find(id => id !== currentUser.id);
+                    const opponentIndex = data.playersIds.indexOf(opponentId);
+                    userPkOpponent = { 
+                        name: data.playersList[opponentIndex], 
+                        id: opponentId 
+                    };
+                    
+                    // 重置分数
+                    userPkScore1 = userPkScores[currentUser.id] || 0;
+                    userPkScore2 = userPkScores[opponentId] || 0;
+                    
+                    // 更新UI
+                    document.getElementById('opponent-name').textContent = userPkOpponent.name;
+                    document.getElementById('final-opponent-name').textContent = userPkOpponent.name;
+                    document.getElementById('user-pk-score1').textContent = userPkScore1;
+                    document.getElementById('user-pk-score2').textContent = userPkScore2;
+                    
+                    // 切换显示
+                    document.getElementById('user-pk-rooms').classList.add('d-none');
+                    document.getElementById('user-pk-arena').classList.remove('d-none');
+                    document.getElementById('user-pk-result').classList.add('d-none');
+                    
+                    showUserPkQuestion();
+                } else {
+                    alert('开始PK失败: ' + (data.message || '获取游戏状态失败'));
+                }
+            } catch (error) {
+                console.error('开始PK游戏失败:', error);
+                alert('开始PK游戏失败: ' + error.message);
+            }
+        }
+        
+        // 生成用户PK题目
+        function generateUserPkQuestions() {
+            userPkQuestions = [];
+            const allWords = [];
+            
+            // 收集所有单词
+            wordData.primary.forEach(word => allWords.push({ ...word, level: 'primary' }));
+            wordData.middle.forEach(word => allWords.push({ ...word, level: 'middle' }));
+            wordData.high.forEach(word => allWords.push({ ...word, level: 'high' }));
+            
+            // 随机选择pkRound个单词
+            while (userPkQuestions.length < pkRound && allWords.length > 0) {
+                const randomIndex = Math.floor(Math.random() * allWords.length);
+                const selectedWord = allWords.splice(randomIndex, 1)[0];
+                userPkQuestions.push(selectedWord);
+            }
+        }
+        
+        // 显示用户PK题目
+        async function showUserPkQuestion() {
+            // 先获取服务器最新状态（确保题目同步）
+            let currentQuestion = null;
+            try {
+                const response = await fetch(`/api/pk/rooms/${currentRoom.id}/game`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    // 同步服务器的题目列表和索引
+                    userPkQuestions = data.questions;
+                    currentUserPkQuestionIndex = data.currentQuestionIndex;
+                    
+                    // 同步剩余时间（以服务器为准）
+                    userPkRemainingTime = data.remainingTime || timeLimit;
+                    userPkScore1 = data.scores[currentUser.id] || 0;
+                    userPkScore2 = data.scores[userPkOpponent.id] || 0;
+                    
+                    // 获取当前题目
+                    currentQuestion = userPkQuestions[currentUserPkQuestionIndex];
+                }
+            } catch (error) {
+                console.error('获取游戏状态失败:', error);
+                currentQuestion = userPkQuestions[currentUserPkQuestionIndex];
+                userPkRemainingTime = timeLimit;
+            }
+            
+            // 检查是否还有题目
+            if (!currentQuestion) {
+                showUserPkResult();
+                return;
+            }
+            
+            const question = currentQuestion;
+            
+            document.getElementById('user-pk-score1').textContent = userPkScore1;
+            document.getElementById('user-pk-score2').textContent = userPkScore2;
+            document.getElementById('user-pk-word').textContent = question.word;
+            document.getElementById('user-pk-phonetic').textContent = question.phonetic || '';
+            document.getElementById('user-pk-result1').innerHTML = '';
+            document.getElementById('user-pk-result2').innerHTML = '';
+            
+            // 使用服务器端生成的选项（保持双方一致）
+            const options = question.options || [];
+            const correctMeaning = question.correctAnswer || question.meaning;
+            
+            // 显示选项
+            const optionsContainer = document.getElementById('user-pk-options');
+            optionsContainer.innerHTML = '';
+            
+            options.forEach((option, index) => {
+                const button = document.createElement('button');
+                button.className = 'option-btn';
+                button.textContent = option;
+                button.dataset.correct = option === correctMeaning;
+                
+                button.addEventListener('click', function() {
+                    checkUserPkAnswer(option === correctMeaning);
+                });
+                
+                optionsContainer.appendChild(button);
+            });
+            
+            // 隐藏下一题按钮
+            document.getElementById('user-pk-next-btn').classList.add('d-none');
+            
+            // 开始计时（使用同步后的剩余时间）
+            document.getElementById('user-pk-timer').textContent = `时间：${userPkRemainingTime}秒`;
+            if (userPkTimerInterval) clearInterval(userPkTimerInterval);
+            userPkTimerInterval = setInterval(async () => {
+                userPkRemainingTime--;
+                document.getElementById('user-pk-timer').textContent = `时间：${userPkRemainingTime}秒`;
+                
+                // 检查服务器状态，看是否双方都已完成当前题
+                try {
+                    const response = await fetch(`/api/pk/rooms/${currentRoom.id}/game`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    if (response.ok) {
+                        // 检查当前题目是否双方都已回答
+                        const currentAnswers = data.answers;
+                        if (currentAnswers && currentAnswers[currentUser.id] && currentAnswers[currentUser.id][currentUserPkQuestionIndex] !== undefined) {
+                            // 当前用户已答完，检查对手
+                            const opponentAnswer = currentAnswers[userPkOpponent.id];
+                            if (opponentAnswer && opponentAnswer[currentUserPkQuestionIndex] !== undefined) {
+                                // 双方都答完了
+                                clearInterval(userPkTimerInterval);
+                                await loadOpponentAnswer();
+                                return;
+                            }
+                        }
+                    }
+                } catch (error) {
+                    console.error('检查答题状态失败:', error);
+                }
+                
+                // 时间到，算作答错（但不自动进入下一题，等待对方）
+                if (userPkRemainingTime <= 0) {
+                    clearInterval(userPkTimerInterval);
+                    checkUserPkAnswer(false);
+                }
+            }, 1000);
+        }
+        
+        // 检查用户PK答案
+        async function checkUserPkAnswer(userCorrect) {
+            if (userPkTimerInterval) clearInterval(userPkTimerInterval);
+            
+            const userResult1 = document.getElementById('user-pk-result1');
+            const userResult2 = document.getElementById('user-pk-result2');
+            
+            // 禁用选项
+            document.querySelectorAll('#user-pk-options .option-btn').forEach(btn => {
+                btn.disabled = true;
+                if (btn.dataset.correct === 'true') {
+                    btn.classList.add('correct');
+                }
+            });
+            
+            try {
+                // 提交答案到服务器
+                const response = await fetch(`/api/pk/rooms/${currentRoom.id}/answer`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'Authorization': `Bearer ${token}`
+                    },
+                    body: JSON.stringify({
+                        questionIndex: currentUserPkQuestionIndex,
+                        isCorrect: userCorrect
+                    })
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    // 更新分数显示
+                    userPkScore1 = data.scores[currentUser.id] || 0;
+                    document.getElementById('user-pk-score1').textContent = userPkScore1;
+                    
+                    // 显示用户答案
+                    if (userCorrect) {
+                        userResult1.innerHTML = '<span class="text-success">✓ 正确</span>';
+                    } else {
+                        userResult1.innerHTML = '<span class="text-danger">✗ 错误</span>';
+                    }
+                    
+                    // 检查是否双方都答完了
+                    if (data.bothAnswered) {
+                        // 获取对手答案并显示
+                        await loadOpponentAnswer();
+                    } else {
+                        // 等待对手答案（时间耗尽后也等待）
+                        userResult2.innerHTML = '<span class="text-muted">等待对手...</span>';
+                        waitForOpponentAnswer();
+                    }
+                } else {
+                    alert(data.message || '提交答案失败');
+                }
+            } catch (error) {
+                console.error('提交答案失败:', error);
+                alert('提交答案失败');
+            }
+        }
+        
+        // 等待对手回答
+        function waitForOpponentAnswer() {
+            const checkInterval = setInterval(async () => {
+                try {
+                    const response = await fetch(`/api/pk/rooms/${currentRoom.id}/game`, {
+                        headers: {
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    if (response.ok) {
+                        // 检查对手是否已回答
+                        const opponentAnswer = data.answers[userPkOpponent.id];
+                        if (opponentAnswer && opponentAnswer[currentUserPkQuestionIndex] !== undefined) {
+                            clearInterval(checkInterval);
+                            await loadOpponentAnswer();
+                        }
+                    }
+                } catch (error) {
+                    console.error('检查对手答案失败:', error);
+                }
+            }, 1000);
+        }
+        
+        // 加载并显示对手答案
+        async function loadOpponentAnswer() {
+            try {
+                const response = await fetch(`/api/pk/rooms/${currentRoom.id}/game`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    // 同步服务器状态（确保题目一致）
+                    userPkQuestions = data.questions;
+                    currentUserPkQuestionIndex = data.currentQuestionIndex;
+                    
+                    // 更新分数
+                    userPkScore1 = data.scores[currentUser.id] || 0;
+                    userPkScore2 = data.scores[userPkOpponent.id] || 0;
+                    document.getElementById('user-pk-score1').textContent = userPkScore1;
+                    document.getElementById('user-pk-score2').textContent = userPkScore2;
+                    
+                    // 显示对手答案
+                    const opponentAnswer = data.answers[userPkOpponent.id];
+                    const userResult2 = document.getElementById('user-pk-result2');
+                    
+                    if (opponentAnswer && opponentAnswer[currentUserPkQuestionIndex]) {
+                        userResult2.innerHTML = '<span class="text-success">✓ 正确</span>';
+                    } else {
+                        userResult2.innerHTML = '<span class="text-danger">✗ 错误</span>';
+                    }
+                    
+                    // 显示下一题或完成按钮
+                    if (currentUserPkQuestionIndex < userPkQuestions.length - 1) {
+                        // 双方都答完后，自动进入下一题
+                        setTimeout(() => {
+                            goToNextQuestion();
+                        }, 1500);
+                    } else {
+                        setTimeout(() => {
+                            showUserPkResult();
+                        }, 1500);
+                    }
+                }
+            } catch (error) {
+                console.error('加载对手答案失败:', error);
+            }
+        }
+        
+        // 进入下一题
+        async function goToNextQuestion() {
+            try {
+                // 先获取服务器最新状态（确保双方同步）
+                const response = await fetch(`/api/pk/rooms/${currentRoom.id}/game`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    // 同步服务器的题目索引和题目列表
+                    currentUserPkQuestionIndex = data.currentQuestionIndex;
+                    userPkQuestions = data.questions;
+                    
+                    // 更新分数显示
+                    userPkScore1 = data.scores[currentUser.id] || 0;
+                    userPkScore2 = data.scores[userPkOpponent.id] || 0;
+                    document.getElementById('user-pk-score1').textContent = userPkScore1;
+                    document.getElementById('user-pk-score2').textContent = userPkScore2;
+                    
+                    showUserPkQuestion();
+                } else {
+                    alert(data.message || '进入下一题失败');
+                }
+            } catch (error) {
+                console.error('进入下一题失败:', error);
+            }
+        }
+        
+        // 更新PK分数显示
+        async function updatePkScores() {
+            try {
+                const response = await fetch(`/api/pk/rooms/${currentRoom.id}/game`, {
+                    headers: {
+                        'Authorization': `Bearer ${token}`
+                    }
+                });
+                
+                const data = await response.json();
+                if (response.ok) {
+                    userPkScore1 = data.scores[currentUser.id] || 0;
+                    userPkScore2 = data.scores[userPkOpponent.id] || 0;
+                    document.getElementById('user-pk-score1').textContent = userPkScore1;
+                    document.getElementById('user-pk-score2').textContent = userPkScore2;
+                }
+            } catch (error) {
+                console.error('更新分数失败:', error);
+            }
+        }
+        
+        // 显示用户PK结果
+        function showUserPkResult() {
+            if (userPkTimerInterval) clearInterval(userPkTimerInterval);
+            
+            document.getElementById('user-pk-arena').classList.add('d-none');
+            document.getElementById('user-pk-result').classList.remove('d-none');
+            
+            document.getElementById('final-score1').textContent = userPkScore1;
+            document.getElementById('final-score2').textContent = userPkScore2;
+            
+            const winnerText = document.getElementById('pk-winner');
+            if (userPkScore1 > userPkScore2) {
+                winnerText.innerHTML = '🎉 恭喜你获胜！';
+                winnerText.className = 'text-success text-lg font-bold mb-4';
+            } else if (userPkScore1 < userPkScore2) {
+                winnerText.innerHTML = '很遗憾，你输了';
+                winnerText.className = 'text-danger text-lg font-bold mb-4';
+            } else {
+                winnerText.innerHTML = '平局！';
+                winnerText.className = 'text-warning text-lg font-bold mb-4';
+            }
+        }
+        
         // 生成测试题目
         function generateTestQuestions() {
             testQuestions = [];
@@ -822,8 +1872,8 @@
             const distractors = generateDistractors(correctMeaning, question.level);
             const options = [correctMeaning, ...distractors, '不认识'];
             
-            // 打乱选项顺序
-            for (let i = options.length - 1; i > 0; i--) {
+            // 打乱选项顺序（但不认识固定在最后）
+            for (let i = options.length - 2; i > 0; i--) {
                 const j = Math.floor(Math.random() * (i + 1));
                 [options[i], options[j]] = [options[j], options[i]];
             }
@@ -1025,13 +2075,27 @@
         function init() {
             loadWordData();
             restoreLoginState();
-            initEventListeners();
+            
+            // 等待DOM完全加载后再绑定事件监听器
+            if (document.readyState === 'loading') {
+                document.addEventListener('DOMContentLoaded', initEventListeners);
+            } else {
+                initEventListeners();
+            }
+        }
+
+        // 安全添加事件监听器
+        function safeAddListener(elementId, event, handler) {
+            const el = document.getElementById(elementId);
+            if (el) {
+                el.addEventListener(event, handler);
+            }
         }
 
         // 初始化事件监听
         function initEventListeners() {
             // 开始测评按钮
-            document.getElementById('start-test').addEventListener('click', function() {
+            safeAddListener('start-test', 'click', function() {
                 generateTestQuestions();
                 currentQuestionIndex = 0;
                 correctCount = 0;
@@ -1047,7 +2111,7 @@
             });
             
             // 下一题按钮
-            document.getElementById('next-btn').addEventListener('click', function() {
+            safeAddListener('next-btn', 'click', function() {
                 if (checkAnswer()) {
                     currentQuestionIndex++;
                     
@@ -1061,19 +2125,19 @@
             });
             
             // 重新测评按钮
-            document.getElementById('restart-test').addEventListener('click', function() {
+            safeAddListener('restart-test', 'click', function() {
                 document.getElementById('result-page').classList.add('d-none');
                 document.getElementById('start-page').classList.remove('d-none');
             });
 
             // 登录表单提交
-            document.getElementById('login-form').addEventListener('submit', async function(e) {
+            safeAddListener('login-form', 'submit', async function(e) {
                 e.preventDefault();
                 const username = document.getElementById('login-username').value;
                 const password = document.getElementById('login-password').value;
 
                 try {
-                    const response = await fetch('http://localhost:3000/api/users/login', {
+                    const response = await fetch('/api/users/login', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1089,6 +2153,13 @@
                         localStorage.setItem('user', JSON.stringify(currentUser));
                         alert('登录成功');
                         showPage('start-page');
+                        // 修改首页提示信息为个人中心
+                        updateStartPageInfo();
+                        // 更新按钮显示
+                        const loginBtn2 = document.getElementById('login-btn');
+                        const profileBtn2 = document.getElementById('profile-btn');
+                        if (loginBtn2) loginBtn2.classList.add('d-none');
+                        if (profileBtn2) profileBtn2.classList.remove('d-none');
                     } else {
                         alert(data.message);
                     }
@@ -1099,13 +2170,13 @@
             });
 
             // 注册表单提交
-            document.getElementById('register-form').addEventListener('submit', async function(e) {
+            safeAddListener('register-form', 'submit', async function(e) {
                 e.preventDefault();
                 const username = document.getElementById('register-username').value;
                 const password = document.getElementById('register-password').value;
 
                 try {
-                    const response = await fetch('http://localhost:3000/api/users/register', {
+                    const response = await fetch('/api/users/register', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json'
@@ -1126,37 +2197,33 @@
                 }
             });
 
-            // 页面切换事件
-            document.getElementById('login-btn').addEventListener('click', function() {
-                if (currentUser) {
-                    showPage('profile-page');
-                    loadUserProfile();
-                } else {
-                    showPage('login-page');
-                }
+            // 个人中心按钮点击事件
+            document.getElementById('profile-btn')?.addEventListener('click', function() {
+                showPage('profile-page');
+                loadUserProfile();
             });
 
-            document.getElementById('to-register').addEventListener('click', function(e) {
+            safeAddListener('to-register', 'click', function(e) {
                 e.preventDefault();
                 showPage('register-page');
             });
 
-            document.getElementById('to-login').addEventListener('click', function(e) {
+            safeAddListener('to-login', 'click', function(e) {
                 e.preventDefault();
                 showPage('login-page');
             });
 
-            document.getElementById('back-to-start').addEventListener('click', function(e) {
+            safeAddListener('back-to-start', 'click', function(e) {
                 e.preventDefault();
                 showPage('start-page');
             });
 
-            document.getElementById('back-to-start2').addEventListener('click', function(e) {
+            safeAddListener('back-to-start2', 'click', function(e) {
                 e.preventDefault();
                 showPage('start-page');
             });
 
-            document.getElementById('to-profile').addEventListener('click', function() {
+            safeAddListener('to-profile', 'click', function() {
                 if (currentUser) {
                     showPage('profile-page');
                     loadUserProfile();
@@ -1165,11 +2232,11 @@
                 }
             });
 
-            document.getElementById('back-from-profile').addEventListener('click', function() {
+            safeAddListener('back-from-profile', 'click', function() {
                 showPage('start-page');
             });
 
-            document.getElementById('logout-btn').addEventListener('click', function() {
+            safeAddListener('logout-btn', 'click', function() {
                 currentUser = null;
                 token = null;
                 wrongWords = [];
@@ -1177,6 +2244,12 @@
                 localStorage.removeItem('user');
                 alert('退出登录成功');
                 showPage('start-page');
+                resetStartPageInfo();
+                // 恢复按钮显示
+                const loginBtn3 = document.getElementById('login-btn');
+                const profileBtn3 = document.getElementById('profile-btn');
+                if (loginBtn3) loginBtn3.classList.remove('d-none');
+                if (profileBtn3) profileBtn3.classList.add('d-none');
             });
 
             // 个人中心标签页切换
@@ -1199,16 +2272,20 @@
             });
 
             // 管理员后台相关事件
-            document.getElementById('to-admin').addEventListener('click', function() {
+            safeAddListener('to-admin', 'click', function() {
+                console.log('管理员后台按钮被点击');
+                console.log('当前用户:', currentUser);
                 if (currentUser && currentUser.role === 'admin') {
+                    console.log('用户是管理员，跳转到管理员后台');
                     showPage('admin-page');
                     loadUserList();
                 } else {
+                    console.log('权限不足');
                     alert('权限不足，需要管理员权限');
                 }
             });
 
-            document.getElementById('back-from-admin').addEventListener('click', function() {
+            safeAddListener('back-from-admin', 'click', function() {
                 showPage('profile-page');
             });
 
@@ -1238,14 +2315,14 @@
             });
 
             // 加载单词列表
-            document.getElementById('load-words').addEventListener('click', function() {
+            safeAddListener('load-words', 'click', function() {
                 const stage = document.getElementById('word-stage').value;
                 const level = document.getElementById('word-level').value;
                 loadWordList(stage, level);
             });
 
             // 添加单词表单提交
-            document.getElementById('add-word-form').addEventListener('submit', async function(e) {
+            safeAddListener('add-word-form', 'submit', async function(e) {
                 e.preventDefault();
                 const word = document.getElementById('new-word').value;
                 const meaning = document.getElementById('new-meaning').value;
@@ -1254,7 +2331,7 @@
                 const level = document.getElementById('word-level').value;
 
                 try {
-                    const response = await fetch('http://localhost:3000/api/words', {
+                    const response = await fetch('/api/words', {
                         method: 'POST',
                         headers: {
                             'Content-Type': 'application/json',
@@ -1279,54 +2356,15 @@
                 }
             });
             
-            // 开始AI单词PK按钮
-            document.getElementById('start-pk').addEventListener('click', function() {
-                generatePkQuestions();
-                currentPkQuestionIndex = 0;
-                userScore = 0;
-                aiScore = 0;
-                
-                // 重置分数显示
-                document.getElementById('user-score').textContent = userScore;
-                document.getElementById('ai-score').textContent = aiScore;
-                
-                document.getElementById('start-page').classList.add('d-none');
-                document.getElementById('pk-page').classList.remove('d-none');
-                showCurrentPkQuestion();
-            });
+            // 开始AI单词PK按钮（已移至PK选择页面）
+            const startPkBtn = document.getElementById('start-pk');
+            if (startPkBtn) {
+                startPkBtn.addEventListener('click', startAiPk);
+            }
             
-            // PK下一题按钮
-            document.getElementById('pk-next-btn').addEventListener('click', function() {
-                // 检查是否有选中的选项
-                const selectedButton = document.querySelector('.option-btn.selected');
-                
-                if (selectedButton) {
-                    // 用户已经选择了选项，检查答案
-                    if (checkPkAnswer()) {
-                        currentPkQuestionIndex++;
-                        
-                        if (currentPkQuestionIndex >= pkRound) {
-                            showPkResult();
-                        } else {
-                            showCurrentPkQuestion();
-                            this.classList.add('d-none');
-                        }
-                    }
-                } else {
-                    // 用户没有选择选项（时间到的情况），直接进入下一题
-                    currentPkQuestionIndex++;
-                    
-                    if (currentPkQuestionIndex >= pkRound) {
-                        showPkResult();
-                    } else {
-                        showCurrentPkQuestion();
-                        this.classList.add('d-none');
-                    }
-                }
-            });
-            
+
             // PK重新开始按钮
-            document.getElementById('pk-restart-btn').addEventListener('click', function() {
+            safeAddListener('pk-restart-btn', 'click', function() {
                 generatePkQuestions();
                 currentPkQuestionIndex = 0;
                 userScore = 0;
@@ -1344,9 +2382,87 @@
             });
             
             // PK返回首页按钮
-            document.getElementById('pk-back-btn').addEventListener('click', function() {
+            safeAddListener('pk-back-btn', 'click', function() {
                 document.getElementById('pk-page').classList.add('d-none');
                 document.getElementById('start-page').classList.remove('d-none');
+            });
+            
+            // 用户PK按钮
+            safeAddListener('start-user-pk', 'click', function() {
+                if (!currentUser) {
+                    alert('请先登录后再进行用户PK');
+                    showPage('login-page');
+                    return;
+                }
+                document.getElementById('user-pk-arena').classList.add('d-none');
+                document.getElementById('user-pk-result').classList.add('d-none');
+                document.getElementById('user-pk-rooms').classList.remove('d-none');
+                showPage('user-pk-page');
+                loadPKRooms();
+            });
+            
+            // 创建房间按钮
+            safeAddListener('create-room-btn', 'click', function() {
+                createRoom();
+            });
+            
+            // 用户PK房间列表返回首页按钮
+            safeAddListener('user-pk-back-home-btn', 'click', function() {
+                if (roomRefreshInterval) {
+                    clearInterval(roomRefreshInterval);
+                    roomRefreshInterval = null;
+                }
+                currentRoom = null;
+                showPage('start-page');
+            });
+            
+            // 用户PK返回首页按钮
+            safeAddListener('user-pk-back-btn', 'click', function() {
+                document.getElementById('user-pk-page').classList.add('d-none');
+                document.getElementById('user-pk-arena').classList.add('d-none');
+                document.getElementById('user-pk-rooms').classList.remove('d-none');
+                document.getElementById('user-pk-result').classList.add('d-none');
+                currentRoom = null;
+                showPage('start-page');
+            });
+            
+            // 用户PK下一题按钮 - 现在是自动进入下一题，不需要点击
+            
+            // 用户PK完成按钮
+            safeAddListener('user-pk-finish-btn', 'click', function() {
+                showUserPkResult();
+            });
+            
+            // 用户PK再来一局按钮
+            safeAddListener('user-pk-restart-btn', 'click', async function() {
+                try {
+                    const response = await fetch(`/api/pk/rooms/${currentRoom.id}/restart`, {
+                        method: 'POST',
+                        headers: {
+                            'Content-Type': 'application/json',
+                            'Authorization': `Bearer ${token}`
+                        }
+                    });
+                    
+                    const data = await response.json();
+                    if (response.ok) {
+                        // 重新开始游戏
+                        currentRoom = data.room;
+                        // 重新获取题目
+                        await startUserPKGame();
+                    } else {
+                        alert(data.message || '重新开始失败');
+                    }
+                } catch (error) {
+                    console.error('重新开始失败:', error);
+                    alert('重新开始失败');
+                }
+            });
+            
+            // 用户PK返回首页按钮（结果页）
+            safeAddListener('user-pk-back-home', 'click', function() {
+                document.getElementById('user-pk-result').classList.add('d-none');
+                showPage('start-page');
             });
         }
 
@@ -1355,7 +2471,7 @@
             if (!token) return;
 
             try {
-                const response = await fetch('http://localhost:3000/api/tests', {
+                const response = await fetch('/api/tests', {
                     method: 'POST',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1367,6 +2483,11 @@
                 const data = await response.json();
                 if (response.ok) {
                     console.log('测评记录保存成功');
+                    
+                    // 将新记录添加到 testHistoryData 数组，以便图表能显示最新数据
+                    if (data.record) {
+                        testHistoryData.unshift(data.record);
+                    }
                 } else {
                     console.error('保存测评记录失败:', data.message);
                 }
@@ -1374,6 +2495,48 @@
                 console.error('保存测评记录失败:', error);
             }
         }
+
+            // 使用事件委托绑定底部导航栏点击事件
+            document.addEventListener('click', function(e) {
+                const target = e.target;
+                
+                // 检查是否点击了测评按钮或其子元素
+                const navTest = document.getElementById('nav-test');
+                if (navTest && (target === navTest || navTest.contains(target))) {
+                    if (!currentUser) {
+                        showPage('login-page');
+                        return;
+                    }
+                    showPage('start-page');
+                    updateBottomNav('nav-test');
+                    return;
+                }
+                
+                // 检查是否点击了PK按钮或其子元素
+                const navPk = document.getElementById('nav-pk');
+                if (navPk && (target === navPk || navPk.contains(target))) {
+                    if (!currentUser) {
+                        showPage('login-page');
+                        return;
+                    }
+                    showPage('pk-select-page');
+                    updateBottomNav('nav-pk');
+                    return;
+                }
+                
+                // 检查是否点击了个人中心按钮或其子元素
+                const navProfile = document.getElementById('nav-profile');
+                if (navProfile && (target === navProfile || navProfile.contains(target))) {
+                    if (!currentUser) {
+                        showPage('login-page');
+                        return;
+                    }
+                    showPage('profile-page');
+                    loadUserProfile();
+                    updateBottomNav('nav-profile');
+                    return;
+                }
+            });
 
         // 加载用户个人信息和历史测评记录
         
@@ -1447,8 +2610,174 @@
             }
         });
         
-        // 历史测评记录数据（用于绘制图表）
-        let testHistoryData = [];
+        // 复习错题相关变量
+        let reviewWords = [];
+        let currentReviewIndex = 0;
+        let reviewCorrectCount = 0;
+        
+        // 开始复习错题
+        safeAddListener('review-wrong-btn', 'click', function() {
+            const key = currentUser ? `wrong_words_${currentUser.id}` : 'wrong_words_guest';
+            const words = JSON.parse(localStorage.getItem(key) || '[]');
+            
+            if (words.length === 0) {
+                alert('暂无错题记录！');
+                return;
+            }
+            
+            reviewWords = [...words];
+            currentReviewIndex = 0;
+            reviewCorrectCount = 0;
+            
+            // 隐藏错题列表，显示复习模式
+            document.getElementById('wrong-words-list').classList.add('d-none');
+            document.getElementById('review-wrong-btn').classList.add('d-none');
+            document.getElementById('clear-wrong-btn').classList.add('d-none');
+            document.getElementById('review-mode').classList.remove('d-none');
+            
+            showReviewQuestion();
+        });
+        
+        // 显示复习题目（填空补全单词模式）
+        function showReviewQuestion() {
+            if (currentReviewIndex >= reviewWords.length) {
+                finishReview();
+                return;
+            }
+            
+            const word = reviewWords[currentReviewIndex];
+            
+            document.getElementById('review-current').textContent = currentReviewIndex + 1;
+            document.getElementById('review-total').textContent = reviewWords.length;
+            document.getElementById('review-score').textContent = `得分: ${reviewCorrectCount}`;
+            
+            // 显示释义
+            document.getElementById('review-meaning').textContent = word.meaning;
+            
+            // 生成填空显示（隐藏部分字母）
+            const blankWord = generateBlankWord(word.word);
+            document.getElementById('review-blank').textContent = blankWord;
+            
+            // 显示音标作为提示
+            document.getElementById('review-hint').textContent = `提示：${word.phonetic || '无音标'}`;
+            document.getElementById('review-hint').classList.remove('d-none');
+            
+            // 清空输入框和结果
+            document.getElementById('review-input').value = '';
+            document.getElementById('review-result').innerHTML = '';
+            
+            // 显示提交按钮，隐藏其他按钮
+            document.getElementById('review-submit').classList.remove('d-none');
+            document.getElementById('review-show-answer').classList.remove('d-none');
+            document.getElementById('review-finish').classList.add('d-none');
+            
+            // 聚焦输入框
+            document.getElementById('review-input').focus();
+        }
+        
+        // 生成填空单词（隐藏一半字母）
+        function generateBlankWord(word) {
+            if (word.length <= 3) {
+                // 短单词只显示首字母
+                return word[0] + '_'.repeat(word.length - 1);
+            } else if (word.length <= 5) {
+                // 中等长度显示首字母和尾字母
+                return word[0] + '_'.repeat(word.length - 2) + word[word.length - 1];
+            } else {
+                // 长单词显示首字母和部分中间字母
+                const half = Math.floor(word.length / 2);
+                let result = word[0];
+                for (let i = 1; i < word.length - 1; i++) {
+                    if (i < half) {
+                        result += '_';
+                    } else {
+                        result += word[i];
+                    }
+                }
+                result += word[word.length - 1];
+                return result;
+            }
+        }
+        
+        // 提交答案
+        safeAddListener('review-submit', 'click', function() {
+            const userAnswer = document.getElementById('review-input').value.trim().toLowerCase();
+            const correctAnswer = reviewWords[currentReviewIndex].word.toLowerCase();
+            
+            const resultDiv = document.getElementById('review-result');
+            const word = reviewWords[currentReviewIndex];
+            
+            if (userAnswer === correctAnswer) {
+                resultDiv.innerHTML = `<span class="text-success">✓ 回答正确！该单词已从错题本中移除</span>`;
+                reviewCorrectCount++;
+                document.getElementById('review-score').textContent = `得分: ${reviewCorrectCount}`;
+                
+                // 从错题本中移除正确回答的单词
+                removeFromWrongWords(word.word);
+            } else {
+                resultDiv.innerHTML = `<span class="text-danger">✗ 回答错误！正确答案：<strong>${word.word}</strong></span>`;
+            }
+            
+            // 隐藏提交和显示答案按钮
+            document.getElementById('review-submit').classList.add('d-none');
+            document.getElementById('review-show-answer').classList.add('d-none');
+            
+            // 延迟1秒后进入下一题
+            setTimeout(() => {
+                currentReviewIndex++;
+                showReviewQuestion();
+            }, 1500);
+        });
+        
+        // 显示答案
+        safeAddListener('review-show-answer', 'click', function() {
+            const word = reviewWords[currentReviewIndex];
+            const resultDiv = document.getElementById('review-result');
+            
+            resultDiv.innerHTML = `<span class="text-warning">正确答案：<strong>${word.word}</strong></span>`;
+            
+            // 隐藏提交和显示答案按钮
+            document.getElementById('review-submit').classList.add('d-none');
+            document.getElementById('review-show-answer').classList.add('d-none');
+            
+            // 延迟1秒后进入下一题
+            setTimeout(() => {
+                currentReviewIndex++;
+                showReviewQuestion();
+            }, 1500);
+        });
+        
+        // 从错题本中移除单词
+        function removeFromWrongWords(wordToRemove) {
+            const key = currentUser ? `wrong_words_${currentUser.id}` : 'wrong_words_guest';
+            const words = JSON.parse(localStorage.getItem(key) || '[]');
+            const filtered = words.filter(w => w.word !== wordToRemove);
+            localStorage.setItem(key, JSON.stringify(filtered));
+        }
+        
+        // 完成复习
+        function finishReview() {
+            const resultDiv = document.getElementById('review-result');
+            const message = document.getElementById('review-message');
+            
+            message.textContent = `复习完成！共 ${reviewWords.length} 题，答对 ${reviewCorrectCount} 题，${reviewWords.length - reviewCorrectCount} 题仍需复习`;
+            message.className = 'text-primary';
+            resultDiv.classList.remove('d-none');
+            
+            document.getElementById('review-finish').classList.remove('d-none');
+        }
+        
+        // 退出复习模式
+        safeAddListener('review-finish', 'click', function() {
+            // 重新加载错题列表
+            loadWrongWords();
+            
+            // 显示错题列表，隐藏复习模式
+            document.getElementById('wrong-words-list').classList.remove('d-none');
+            document.getElementById('review-wrong-btn').classList.remove('d-none');
+            document.getElementById('clear-wrong-btn').classList.remove('d-none');
+            document.getElementById('review-mode').classList.add('d-none');
+        });
         
         // 绘制词汇量变化折线图
         function drawVocabularyChart() {
@@ -1536,18 +2865,32 @@
         
         async function loadUserProfile() {
             if (!token) {
-                document.getElementById('user-info').innerHTML = '<p class="text-danger">请先登录查看个人信息</p>';
-                document.getElementById('test-records').innerHTML = '<p class="text-danger">请先登录查看历史记录</p>';
+                const userInfoDiv = document.getElementById('user-info');
+                if (userInfoDiv) {
+                    userInfoDiv.innerHTML = '<p class="text-danger">请先登录查看个人信息</p>';
+                }
+                const testRecordsDiv = document.getElementById('test-records');
+                if (testRecordsDiv) {
+                    testRecordsDiv.innerHTML = '<p class="text-danger">请先登录查看历史记录</p>';
+                }
                 return;
             }
 
             try {
+                // 更新用户名显示
+                const profileUsername = document.getElementById('profile-username');
+                if (profileUsername) {
+                    profileUsername.textContent = currentUser.username;
+                }
+
                 // 显示用户信息
                 const userInfoDiv = document.getElementById('user-info');
-                userInfoDiv.innerHTML = `
-                    <p><strong>用户名：</strong>${currentUser.username}</p>
-                    <p><strong>角色：</strong>${currentUser.role === 'admin' ? '管理员' : '普通用户'}</p>
-                `;
+                if (userInfoDiv) {
+                    userInfoDiv.innerHTML = `
+                        <p><strong>用户名：</strong>${currentUser.username}</p>
+                        <p><strong>角色：</strong>${currentUser.role === 'admin' ? '管理员' : '普通用户'}</p>
+                    `;
+                }
 
                 // 如果是管理员，显示管理员后台按钮
                 if (currentUser.role === 'admin') {
@@ -1560,7 +2903,7 @@
                 loadWrongWords();
 
                 // 获取历史测评记录
-                const response = await fetch('http://localhost:3000/api/tests/history', {
+                const response = await fetch('/api/tests/history', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1568,8 +2911,27 @@
 
                 const data = await response.json();
                 if (response.ok) {
+                    console.log('历史记录加载成功:', data.records);
                     // 保存历史记录数据用于绘制图表
                     testHistoryData = data.records || [];
+                    
+                    // 更新统计数据
+                    const records = data.records || [];
+                    const statTests = document.getElementById('stat-tests');
+                    const statVocabulary = document.getElementById('stat-vocabulary');
+                    const statAccuracy = document.getElementById('stat-accuracy');
+                    
+                    if (statTests) statTests.textContent = records.length;
+                    
+                    const maxVocabulary = records.reduce((max, r) => Math.max(max, r.vocabulary || 0), 0);
+                    if (statVocabulary) statVocabulary.textContent = maxVocabulary;
+                    
+                    if (records.length > 0) {
+                        const avgScore = records.reduce((sum, r) => sum + (r.score || 0), 0) / records.length;
+                        if (statAccuracy) statAccuracy.textContent = Math.round(avgScore * 2) + '%';
+                    } else {
+                        if (statAccuracy) statAccuracy.textContent = '0%';
+                    }
                     
                     const recordsDiv = document.getElementById('test-records');
                     if (!data.records || data.records.length === 0) {
@@ -1594,11 +2956,27 @@
                 } else {
                     console.error('获取历史测评记录失败:', data.message);
                     document.getElementById('test-records').innerHTML = '<p class="text-danger">获取历史测评记录失败: ' + data.message + '</p>';
+                    
+                    // 如果token无效，清除本地存储并提示重新登录
+                    if (data.message === '无效的token') {
+                        localStorage.removeItem('token');
+                        localStorage.removeItem('user');
+                        token = null;
+                        currentUser = null;
+                        alert('登录已过期，请重新登录');
+                        showPage('login-page');
+                    }
                 }
             } catch (error) {
                 console.error('加载用户个人信息失败:', error);
-                document.getElementById('user-info').innerHTML = '<p class="text-danger">获取用户信息失败，请检查网络连接</p>';
-                document.getElementById('test-records').innerHTML = '<p class="text-danger">获取历史测评记录失败，请检查网络连接</p>';
+                const userInfoDiv = document.getElementById('user-info');
+                if (userInfoDiv) {
+                    userInfoDiv.innerHTML = '<p class="text-danger">获取用户信息失败，请检查网络连接</p>';
+                }
+                const testRecordsDiv = document.getElementById('test-records');
+                if (testRecordsDiv) {
+                    testRecordsDiv.innerHTML = '<p class="text-danger">获取历史测评记录失败，请检查网络连接</p>';
+                }
             }
         }
 
@@ -1607,7 +2985,7 @@
             if (!token || currentUser.role !== 'admin') return;
 
             try {
-                const response = await fetch('http://localhost:3000/api/admin/users', {
+                const response = await fetch('/api/admin/users', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1653,7 +3031,7 @@
 
             try {
                 const newStatus = currentStatus === 'active' ? 'inactive' : 'active';
-                const response = await fetch(`http://localhost:3000/api/admin/users/${userId}/status`, {
+                const response = await fetch(`/api/admin/users/${userId}/status`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1680,7 +3058,7 @@
             if (!token || currentUser.role !== 'admin') return;
 
             try {
-                const response = await fetch('http://localhost:3000/api/admin/users', {
+                const response = await fetch('/api/admin/users', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1729,7 +3107,7 @@
             if (!token || currentUser.role !== 'admin') return;
 
             try {
-                const response = await fetch(`http://localhost:3000/api/admin/users/${userId}/status`, {
+                const response = await fetch(`/api/admin/users/${userId}/status`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1754,7 +3132,7 @@
         // 加载单词列表
         async function loadWordList(stage, level) {
             try {
-                let url = 'http://localhost:3000/api/words';
+                let url = '/api/words';
                 const params = [];
                 if (stage && stage !== 'all') params.push(`stage=${stage}`);
                 if (level && level !== 'all') params.push(`level=${level}`);
@@ -1815,7 +3193,7 @@
         }
 
         // 保存编辑（管理员）
-        document.getElementById('save-edit-btn').addEventListener('click', async function() {
+        safeAddListener('save-edit-btn', 'click', async function() {
             const id = document.getElementById('edit-word-id').value;
             const word = document.getElementById('edit-word').value;
             const phonetic = document.getElementById('edit-phonetic').value;
@@ -1826,7 +3204,7 @@
             if (!token || currentUser.role !== 'admin') return;
 
             try {
-                const response = await fetch(`http://localhost:3000/api/words/${id}`, {
+                const response = await fetch(`/api/words/${id}`, {
                     method: 'PUT',
                     headers: {
                         'Content-Type': 'application/json',
@@ -1861,7 +3239,7 @@
             if (!confirm('确定要删除这个单词吗？')) return;
 
             try {
-                const response = await fetch(`http://localhost:3000/api/words/${wordId}`, {
+                const response = await fetch(`/api/words/${wordId}`, {
                     method: 'DELETE',
                     headers: {
                         'Authorization': `Bearer ${token}`
@@ -1886,7 +3264,7 @@
             if (!token || currentUser.role !== 'admin') return;
 
             try {
-                const response = await fetch('http://localhost:3000/api/tests', {
+                const response = await fetch('/api/tests', {
                     headers: {
                         'Authorization': `Bearer ${token}`
                     }
@@ -1965,8 +3343,54 @@
             saveTestRecord(correctCount, vocabulary.total, level);
         }
 
-        // 启动应用
-        window.onload = init;
-    </script>
-</body>
+        // 更新底部导航栏状态
+            function updateBottomNav(activeId) {
+                document.querySelectorAll('.bottom-nav-item, .bottom-nav-center').forEach(item => {
+                    item.classList.remove('active');
+                });
+                const activeEl = document.getElementById(activeId);
+                if (activeEl) {
+                    activeEl.classList.add('active');
+                }
+            }
+            
+            // 显示个人中心标签页
+            function showProfileTab(tabId) {
+                document.querySelectorAll('#profile-content > div').forEach(el => {
+                    el.classList.add('d-none');
+                });
+                document.getElementById('profile-' + tabId).classList.remove('d-none');
+                
+                if (tabId === 'records') {
+                    loadUserProfile();
+                } else if (tabId === 'wrong') {
+                    loadWrongWords();
+                } else if (tabId === 'chart') {
+                    drawVocabularyChart();
+                }
+            }
+            
+            // 暴露到全局作用域
+            window.showProfileTab = showProfileTab;
+
+            // 启动应用
+            window.onload = init;
+        </script>
+        
+        <!-- 底部导航栏 -->
+        <div class="bottom-nav">
+            <div id="nav-test" class="bottom-nav-item active">
+                <span class="bottom-nav-item-icon">📚</span>
+                <span class="bottom-nav-item-text">词汇测评</span>
+            </div>
+            <div id="nav-pk" class="bottom-nav-center">
+                <span class="bottom-nav-center-icon">⚔️</span>
+                <span class="bottom-nav-center-text">PK对战</span>
+            </div>
+            <div id="nav-profile" class="bottom-nav-item">
+                <span class="bottom-nav-item-icon">👤</span>
+                <span class="bottom-nav-item-text">个人中心</span>
+            </div>
+        </div>
+    </body>
 </html>

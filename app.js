@@ -7,12 +7,13 @@ const userRoutes = require('./routes/user');
 const wordRoutes = require('./routes/word');
 const testRoutes = require('./routes/test');
 const adminRoutes = require('./routes/admin');
+const pkRoutes = require('./routes/pk');
 
 // 导入数据库连接
 const db = require('./config/database');
 
 const app = express();
-const PORT = process.env.PORT || 3000;
+const PORT = 3001;
 
 // 中间件
 app.use(cors());
@@ -20,17 +21,18 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: true }));
 
 // 静态文件
-app.use(express.static('public'));
+app.use(express.static('.'));
 
 // 路由
 app.use('/api/users', userRoutes);
 app.use('/api/words', wordRoutes);
 app.use('/api/tests', testRoutes);
 app.use('/api/admin', adminRoutes);
+app.use('/api/pk', pkRoutes);
 
-// 根路径
+// 根路径 - 返回前端页面
 app.get('/', (req, res) => {
-    res.send('词汇量测评工具后端API');
+    res.sendFile(__dirname + '/vocabulary_test.html');
 });
 
 // 数据库连接
