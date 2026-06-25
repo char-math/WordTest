@@ -131,16 +131,20 @@ router.post('/rooms/:roomId/join', authMiddleware, async (req, res) => {
     
     if (room.players >= room.maxPlayers) {
       room.status = 'ready';
-      // 生成PK题目
+      // 生成PK题目（只生成一次）
       room.questions = generatePkQuestions();
       // 初始化答案记录
       room.answers = {};
       room.scores = {};
+      room.questionStartTime = {}; // 每题共享的开始时间
       room.playersIds.forEach(id => {
         room.answers[id] = [];
         room.scores[id] = 0;
       });
       room.currentQuestionIndex = 0;
+      // 为第0题设置共享开始时间
+      room.questionStartTime[0] = Date.now();
+      room.isFinished = false;
     }
     
     res.status(200).json({ message: '加入房间成功', room });
@@ -201,7 +205,7 @@ router.get('/rooms/:roomId', authMiddleware, async (req, res) => {
   }
 });
 
-// 提交答案
+// 提交答案（抢答模式）
 router.post('/rooms/:roomId/answer', authMiddleware, async (req, res) => {
   try {
     const roomId = parseInt(req.params.roomId);
@@ -220,7 +224,12 @@ router.post('/rooms/:roomId/answer', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: '游戏还未开始' });
     }
     
-    // 如果当前用户已经答过了，直接返回
+    // 确保 answers 数组已初始化
+    if (!room.answers[req.user.id]) {
+      room.answers[req.user.id] = [];
+    }
+    
+    // 如果当前用户已经答过了，直接返回当前状态
     if (room.answers[req.user.id][questionIndex] !== undefined) {
       const bothAnswered = room.playersIds.every(pId => 
         room.answers[pId] && room.answers[pId][questionIndex] !== undefined
@@ -237,7 +246,7 @@ router.post('/rooms/:roomId/answer', authMiddleware, async (req, res) => {
     // 记录当前用户的答案
     room.answers[req.user.id][questionIndex] = isCorrect;
     
-    // 更新分数
+    // 规则：答对才加分（抢答正确），答错不扣分
     if (isCorrect) {
       room.scores[req.user.id] = (room.scores[req.user.id] || 0) + 1;
     }
@@ -247,12 +256,35 @@ router.post('/rooms/:roomId/answer', authMiddleware, async (req, res) => {
       room.answers[pId] && room.answers[pId][questionIndex] !== undefined
     );
     
+    // 双方都答完后，自动推进到下一题
+    let autoAdvanced = false;
+    let nextIndex = room.currentQuestionIndex;
+    let isLastQuestion = false;
+    
+    if (bothAnswered && questionIndex === room.currentQuestionIndex) {
+      const total = room.questions?.length || 0;
+      if (room.currentQuestionIndex < total - 1) {
+        room.currentQuestionIndex++;
+        const newQIdx = room.currentQuestionIndex;
+        room.questionStartTime[newQIdx] = Date.now();
+        nextIndex = room.currentQuestionIndex;
+        autoAdvanced = true;
+      } else {
+        isLastQuestion = true;
+        room.isFinished = true;
+      }
+    }
+    
     res.status(200).json({ 
       message: '答案提交成功', 
       bothAnswered,
       scores: room.scores,
       questionIndex,
-      currentQuestionIndex: room.currentQuestionIndex
+      currentQuestionIndex: room.currentQuestionIndex,
+      isLastQuestion,
+      autoAdvanced,
+      nextIndex,
+      isFinished: room.isFinished
     });
   } catch (error) {
     console.error('提交答案失败:', error);
@@ -279,11 +311,13 @@ router.get('/rooms/:roomId/game', authMiddleware, async (req, res) => {
       room.questions = generatePkQuestions();
       room.answers = {};
       room.scores = {};
+      room.questionStartTime = {};
       room.playersIds.forEach(id => {
         room.answers[id] = [];
         room.scores[id] = 0;
       });
       room.currentQuestionIndex = 0;
+      room.questionStartTime[0] = Date.now();
     }
     
     // 如果房间还没准备好
@@ -291,12 +325,50 @@ router.get('/rooms/:roomId/game', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: '房间还没有准备好，请等待对手加入' });
     }
     
-    // 计算剩余时间
-    let remainingTime = 0;
-    const timeLimit = 15; // 每题15秒
-    if (room.questionStartTime) {
-      const elapsed = Math.floor((Date.now() - room.questionStartTime) / 1000);
-      remainingTime = Math.max(0, timeLimit - elapsed);
+    const qIdx = room.currentQuestionIndex;
+    const timeLimit = 15;
+    const now = Date.now();
+    
+    // 计算当前题的共享剩余时间（抢答模式：双方共用一个计时器）
+    let sharedRemainingTime = 0;
+    let myHasAnswered = false;
+    let opponentHasAnswered = false;
+    if (room.questionStartTime && room.questionStartTime[qIdx]) {
+      const elapsed = Math.floor((now - room.questionStartTime[qIdx]) / 1000);
+      sharedRemainingTime = Math.max(0, timeLimit - elapsed);
+    }
+    
+    const myHasAnsweredRaw = room.answers[req.user.id] && room.answers[req.user.id][qIdx] !== undefined;
+    myHasAnswered = myHasAnsweredRaw;
+    
+    const opponentId = room.playersIds.find(id => id !== req.user.id);
+    if (opponentId) {
+      opponentHasAnswered = room.answers[opponentId] && room.answers[opponentId][qIdx] !== undefined;
+    }
+    
+    // 检查当前题是否双方都答完
+    let currentBothAnswered = room.playersIds.every(pId => 
+      room.answers[pId] && room.answers[pId][qIdx] !== undefined
+    );
+    
+    // 检查是否超时（共享计时器到点）
+    if (!currentBothAnswered && qIdx < (room.questions?.length || 0) - 1) {
+      if (room.questionStartTime && room.questionStartTime[qIdx]) {
+        const elapsed = (now - room.questionStartTime[qIdx]) / 1000;
+        if (elapsed >= timeLimit) {
+          // 标记所有未作答玩家为超时（答错）
+          for (const pId of room.playersIds) {
+            if (!room.answers[pId]) room.answers[pId] = [];
+            if (room.answers[pId][qIdx] === undefined) {
+              room.answers[pId][qIdx] = false;
+            }
+          }
+          currentBothAnswered = true;
+          // 自动推进
+          room.currentQuestionIndex = qIdx + 1;
+          room.questionStartTime[qIdx + 1] = Date.now();
+        }
+      }
     }
     
     res.status(200).json({
@@ -306,8 +378,12 @@ router.get('/rooms/:roomId/game', authMiddleware, async (req, res) => {
       currentQuestionIndex: room.currentQuestionIndex,
       playersList: room.playersList,
       playersIds: room.playersIds,
-      remainingTime: remainingTime,
-      questionStartTime: room.questionStartTime
+      sharedRemainingTime: sharedRemainingTime,
+      myHasAnswered: myHasAnswered,
+      opponentHasAnswered: opponentHasAnswered,
+      currentBothAnswered: currentBothAnswered,
+      totalQuestions: room.questions?.length || 0,
+      isFinished: !!room.isFinished
     });
   } catch (error) {
     console.error('获取游戏状态失败:', error);
@@ -315,10 +391,11 @@ router.get('/rooms/:roomId/game', authMiddleware, async (req, res) => {
   }
 });
 
-// 推进到下一题
+// 推进到下一题（抢答模式：由客户端在双方都答完后调用）
 router.post('/rooms/:roomId/next', authMiddleware, async (req, res) => {
   try {
     const roomId = parseInt(req.params.roomId);
+    const { clientQuestionIndex } = req.body || {};
     const room = pkRooms.find(r => r.id === roomId);
     
     if (!room) {
@@ -329,18 +406,31 @@ router.post('/rooms/:roomId/next', authMiddleware, async (req, res) => {
       return res.status(400).json({ message: '你不在这个房间里' });
     }
     
-    if (room.currentQuestionIndex < (room.questions?.length || 0) - 1) {
-      room.currentQuestionIndex++;
-      // 重置当前题目的开始时间（用于时间同步）
-      room.questionStartTime = Date.now();
+    let qIdx = room.currentQuestionIndex;
+    const total = room.questions?.length || 0;
+    
+    // 如果服务端已自动推进（客户端落后），同步即可
+    // 否则推进到下一题
+    let isFinished = false;
+    if (qIdx < total - 1) {
+      // 只有当客户端的题目索引与服务端一致时才推进（防止重复推进）
+      if (clientQuestionIndex === undefined || clientQuestionIndex === qIdx) {
+        room.currentQuestionIndex++;
+        qIdx = room.currentQuestionIndex;
+        room.questionStartTime[qIdx] = Date.now();
+      }
+    } else {
+      isFinished = true;
     }
     
     res.status(200).json({ 
       message: '已进入下一题',
       currentQuestionIndex: room.currentQuestionIndex,
-      totalQuestions: room.questions?.length || 0,
-      isFinished: room.currentQuestionIndex >= (room.questions?.length || 0) - 1,
-      questionStartTime: room.questionStartTime
+      totalQuestions: total,
+      isFinished: isFinished,
+      scores: room.scores,
+      answers: room.answers,
+      sharedRemainingTime: isFinished ? 0 : 15
     });
   } catch (error) {
     console.error('推进到下一题失败:', error);
@@ -367,11 +457,13 @@ router.post('/rooms/:roomId/restart', authMiddleware, async (req, res) => {
     // 初始化答案记录
     room.answers = {};
     room.scores = {};
+    room.questionStartTime = {};
     room.playersIds.forEach(id => {
       room.answers[id] = [];
       room.scores[id] = 0;
     });
     room.currentQuestionIndex = 0;
+    room.questionStartTime[0] = Date.now();
     room.status = 'ready';
     
     res.status(200).json({ 

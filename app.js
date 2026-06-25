@@ -8,6 +8,7 @@ const wordRoutes = require('./routes/word');
 const testRoutes = require('./routes/test');
 const adminRoutes = require('./routes/admin');
 const pkRoutes = require('./routes/pk');
+const wrongwordRoutes = require('./routes/wrongwords');
 
 // 导入数据库连接
 const db = require('./config/database');
@@ -29,6 +30,7 @@ app.use('/api/words', wordRoutes);
 app.use('/api/tests', testRoutes);
 app.use('/api/admin', adminRoutes);
 app.use('/api/pk', pkRoutes);
+app.use('/api/wrong-words', wrongwordRoutes);
 
 // 根路径 - 返回前端页面
 app.get('/', (req, res) => {

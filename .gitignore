@@ -1,0 +1,8 @@
+node_modules/
+app.log
+*.log
+database.sqlite
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
